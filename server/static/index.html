@@ -992,8 +992,8 @@
             {mobileMenuOpen && (
               <div
                 onClick={() => setMobileMenuOpen(false)}
-                className="fixed inset-0 bg-black/40 backdrop-blur-xs z-30 md:hidden"
-              />
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden"
+              ></div>
             )}
 
             {/* Main Content Area */}
@@ -1032,7 +1032,7 @@
                   {/* Reset Demo Records Button */}
                   <button
                     onClick={handleResetDemo}
-                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition border border-gray-300 shadow-xs"
+                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition border border-gray-300 shadow-sm"
                     title="Restore demo applications and documents to baseline"
                   >
                     <Icons.Refresh />
@@ -1043,7 +1043,7 @@
                   <div className="relative">
                     <button
                       onClick={() => setShowPersonaDropdown(!showPersonaDropdown)}
-                      className="px-3 py-1.5 bg-forest-50 hover:bg-forest-100 text-forest-800 text-xs font-bold rounded-xl border border-forest-200 flex items-center space-x-1.5 transition shadow-xs"
+                      className="px-3 py-1.5 bg-forest-50 hover:bg-forest-100 text-forest-800 text-xs font-bold rounded-xl border border-forest-200 flex items-center space-x-1.5 transition shadow-sm"
                     >
                       <Icons.UserCheck />
                       <span className="truncate max-w-[120px]">{selectedPersona.name}</span>
@@ -1478,7 +1478,7 @@
               {activeTab === 'ai-verify' && (
                 <div className="max-w-4xl mx-auto space-y-6">
                   {/* 1-Click Presentation Demo Bar */}
-                  <div className="bg-gradient-to-r from-forest-50 to-white border border-forest-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+                  <div className="bg-gradient-to-r from-forest-50 to-white border border-forest-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
                     <div className="flex items-center space-x-2">
                       <span className="p-1.5 bg-forest-600 text-white rounded-lg text-xs">⚡</span>
                       <div>
@@ -1608,7 +1608,7 @@
                           </div>
                           <button
                             onClick={() => setViewHeatmap(!viewHeatmap)}
-                            className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-700 hover:bg-gray-100 transition shadow-xs"
+                            className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-700 hover:bg-gray-100 transition shadow-sm"
                           >
                             {viewHeatmap ? 'View Standard PDF' : 'View ELA Tamper Heatmap'}
                           </button>
@@ -1765,7 +1765,7 @@
                         </div>
 
                         {digiResult ? (
-                          <div className="space-y-3 text-xs bg-white p-4 rounded-xl border border-forest-200 shadow-xs">
+                          <div className="space-y-3 text-xs bg-white p-4 rounded-xl border border-forest-200 shadow-sm">
                             <div className="flex justify-between border-b border-gray-100 pb-2">
                               <span className="text-gray-500">Issuer Authority:</span>
                               <span className="font-bold text-gray-900">{digiResult.issuer}</span>
@@ -2218,7 +2218,7 @@
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-xs focus:ring-2 focus:ring-forest-600 focus:outline-none"
                         value={appNotes}
                         onChange={(e) => setAppNotes(e.target.value)}
-                      />
+                      ></textarea>
                     </div>
 
                     <button
@@ -2263,7 +2263,7 @@
                   {chatMessages.map((msg, i) => (
                     <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                       <div className={`p-2.5 rounded-2xl max-w-[85%] whitespace-pre-line ${
-                        msg.sender === 'user' ? 'bg-forest-600 text-white rounded-br-xs' : 'bg-gray-100 text-gray-800 rounded-bl-xs'
+                        msg.sender === 'user' ? 'bg-forest-600 text-white rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none'
                       }`}>
                         {msg.text}
                       </div>
@@ -2322,7 +2322,7 @@
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-xs focus:ring-2 focus:ring-forest-600 focus:outline-none"
                       value={managerRemarks}
                       onChange={(e) => setManagerRemarks(e.target.value)}
-                    />
+                    ></textarea>
                   </div>
 
                   {decisionMsg && (
