@@ -1075,7 +1075,7 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 def run_server():
     server = ThreadedHTTPServer(("0.0.0.0", PORT), VeriDocServer)
     print(f"================================================================")
-    print(f" VERIDOC • वेरीडॉक — Verification & Audit Platform")
+    print(f" VERIDOC / VeriDoc Verification & Audit Platform")
     print(f" Port: {PORT} (Configured for local & Render cloud deployment)")
     print(f" Local URL: http://localhost:{PORT}")
     print(f" Network URL: http://127.0.0.1:{PORT}")
