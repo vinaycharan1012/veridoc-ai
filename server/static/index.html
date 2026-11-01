@@ -11,6 +11,8 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <!-- Babel Standalone for JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Three.js for 3D Holographic Visuals -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,6 +38,16 @@
               700: '#143628',
               800: '#0e261d',
               900: '#06140e',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 4s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' },
             }
           }
         }
@@ -84,7 +96,7 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
+    const { useState, useEffect, useRef, useMemo } = React;
 
     // SVG Icons
     const Icons = {
@@ -113,14 +125,49 @@
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
         </svg>
       ),
-      PlusCircle: () => (
+      DigiLocker: () => (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+        </svg>
+      ),
+      Face: () => (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      Blockchain: () => (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+        </svg>
+      ),
+      FraudNet: () => (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
       ),
       Rules: () => (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      ),
+      Chat: () => (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+      ),
+      Compare: () => (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+        </svg>
+      ),
+      Menu: () => (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      ),
+      PlusCircle: () => (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
       Upload: () => (
@@ -181,11 +228,103 @@
       )
     };
 
+    // ---------------- THREE.JS 3D HOLOGRAPHIC SEAL COMPONENT ----------------
+    function ThreeDHologramShield() {
+      const containerRef = useRef(null);
+
+      useEffect(() => {
+        if (!containerRef.current || !window.THREE) return;
+        const container = containerRef.current;
+        const width = container.clientWidth || 220;
+        const height = container.clientHeight || 140;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        camera.position.z = 5;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.innerHTML = '';
+        container.appendChild(renderer.domElement);
+
+        // Outer Hexagonal Security Ring
+        const geometry = new THREE.IcosahedronGeometry(1.6, 1);
+        const material = new THREE.MeshBasicMaterial({
+          color: 0x2d6a4f,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.75
+        });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        // Inner Glowing Core (Cryptographic Seed)
+        const innerGeo = new THREE.OctahedronGeometry(0.9, 0);
+        const innerMat = new THREE.MeshBasicMaterial({
+          color: 0x1b4332,
+          wireframe: false,
+          transparent: true,
+          opacity: 0.9
+        });
+        const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+        scene.add(innerMesh);
+
+        // Particle Points
+        const particleGeo = new THREE.BufferGeometry();
+        const particleCount = 120;
+        const posArray = new Float32Array(particleCount * 3);
+        for(let i=0; i < particleCount * 3; i++) {
+          posArray[i] = (Math.random() - 0.5) * 4.5;
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particleMat = new THREE.PointsMaterial({
+          size: 0.04,
+          color: 0x52b788,
+          transparent: true,
+          opacity: 0.8
+        });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        scene.add(particles);
+
+        let animationFrameId;
+        const animate = () => {
+          animationFrameId = requestAnimationFrame(animate);
+          sphere.rotation.x += 0.005;
+          sphere.rotation.y += 0.01;
+          innerMesh.rotation.x -= 0.01;
+          innerMesh.rotation.y -= 0.008;
+          particles.rotation.y += 0.002;
+          renderer.render(scene, camera);
+        };
+        animate();
+
+        return () => {
+          cancelAnimationFrame(animationFrameId);
+          if (container && renderer.domElement) {
+            container.innerHTML = '';
+          }
+        };
+      }, []);
+
+      return (
+        <div className="relative flex flex-col items-center justify-center p-2 rounded-2xl bg-gradient-to-b from-forest-50/80 to-white border border-forest-200 shadow-inner">
+          <div ref={containerRef} className="w-full h-28" />
+          <div className="text-center mt-1">
+            <span className="text-[9px] font-mono font-bold tracking-widest uppercase bg-forest-100 text-forest-800 px-2 py-0.5 rounded-full">
+              3D Quantum Shield Active
+            </span>
+          </div>
+        </div>
+      );
+    }
+
     function App() {
       const [token, setToken] = useState(localStorage.getItem('token') || '');
       const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
       const [activeTab, setActiveTab] = useState('dashboard');
       const [userMode, setUserMode] = useState('manager'); // 'manager' | 'applicant'
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
       // Personas selector
       const personas = [
@@ -223,6 +362,8 @@
       const [documents, setDocuments] = useState([]);
       const [applications, setApplications] = useState([]);
       const [complianceRules, setComplianceRules] = useState([]);
+      const [fraudIntelligence, setFraudIntelligence] = useState(null);
+      const [templateComparison, setTemplateComparison] = useState(null);
       const [searchQuery, setSearchQuery] = useState('');
       const [statusFilter, setStatusFilter] = useState('ALL');
 
@@ -233,6 +374,30 @@
       const [scanResult, setScanResult] = useState(null);
       const [viewHeatmap, setViewHeatmap] = useState(false);
       const [activeDeficiency, setActiveDeficiency] = useState(null);
+
+      // DigiLocker Interactive States
+      const [digiDocType, setDigiDocType] = useState('aadhaar');
+      const [digiIdNumber, setDigiIdNumber] = useState('9812-4412-8801');
+      const [digiResult, setDigiResult] = useState(null);
+      const [digiLoading, setDigiLoading] = useState(false);
+
+      // Biometrics Interactive States
+      const [bioResult, setBioResult] = useState(null);
+      const [bioLoading, setBioLoading] = useState(false);
+      const [bioMode, setBioMode] = useState('match');
+
+      // AI Regulatory Assistant / Chatbot States
+      const [complianceAudit, setComplianceAudit] = useState(null);
+      const [chatOpen, setChatOpen] = useState(false);
+      const [chatMessages, setChatMessages] = useState([
+        { sender: 'ai', text: 'Hello! I am the VERIDOC AI Regulatory Assistant. Ask me about APH 2026-27 rules, missing mandatory fields, or document tampering indicators.' }
+      ]);
+      const [chatInput, setChatInput] = useState('');
+      const [chatLoading, setChatLoading] = useState(false);
+
+      // Blockchain Certificate Lookup State
+      const [blockchainLookupId, setBlockchainLookupId] = useState('VDOC-CHAIN-99210-C');
+      const [blockchainData, setBlockchainData] = useState(null);
 
       // New Application form
       const [appName, setAppName] = useState('');
@@ -262,16 +427,20 @@
         if (!token) return;
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
-          const [sRes, dRes, aRes, rRes] = await Promise.all([
+          const [sRes, dRes, aRes, rRes, fRes, tRes] = await Promise.all([
             fetch('/api/dashboard/stats', { headers }),
             fetch('/api/documents', { headers }),
             fetch('/api/applications', { headers }),
-            fetch('/api/compliance-rules', { headers })
+            fetch('/api/compliance-rules', { headers }),
+            fetch('/api/fraud/intelligence', { headers }),
+            fetch('/api/template/compare', { headers })
           ]);
           if (sRes.ok) setStats(await sRes.json());
           if (dRes.ok) setDocuments(await dRes.json());
           if (aRes.ok) setApplications(await aRes.json());
           if (rRes.ok) setComplianceRules(await rRes.json());
+          if (fRes.ok) setFraudIntelligence(await fRes.json());
+          if (tRes.ok) setTemplateComparison(await tRes.json());
         } catch (e) {
           console.error(e);
         }
@@ -331,6 +500,103 @@
         }
       };
 
+      // DigiLocker Verify Pull
+      const handleDigiLockerPull = async (e) => {
+        e.preventDefault();
+        setDigiLoading(true);
+        setDigiResult(null);
+        try {
+          const res = await fetch('/api/digilocker/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ doc_type: digiDocType, identifier: digiIdNumber, applicant_name: selectedPersona.name })
+          });
+          const data = await res.json();
+          setTimeout(() => {
+            setDigiResult(data);
+            setDigiLoading(false);
+            loadData();
+          }, 600);
+        } catch (err) {
+          alert(err.message);
+          setDigiLoading(false);
+        }
+      };
+
+      // Biometric Verification Handler
+      const handleBiometricTest = async (mode) => {
+        setBioLoading(true);
+        setBioMode(mode);
+        try {
+          const res = await fetch('/api/biometrics/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ mode })
+          });
+          const data = await res.json();
+          setTimeout(() => {
+            setBioResult(data);
+            setBioLoading(false);
+            loadData();
+          }, 600);
+        } catch (err) {
+          alert(err.message);
+          setBioLoading(false);
+        }
+      };
+
+      // Regulatory Compliance Assistant Check
+      const handleRunComplianceAudit = async () => {
+        try {
+          const res = await fetch('/api/compliance/audit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ category })
+          });
+          const data = await res.json();
+          setComplianceAudit(data);
+        } catch (e) {
+          alert('Failed to run compliance audit');
+        }
+      };
+
+      // Blockchain Certificate Lookup
+      const handleBlockchainLookup = async (id) => {
+        try {
+          const res = await fetch(`/api/blockchain/verify/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const data = await res.json();
+          setBlockchainData(data);
+        } catch (e) {
+          alert('Blockchain record not found');
+        }
+      };
+
+      // AI Chatbot Handler
+      const handleSendChat = async (e) => {
+        e.preventDefault();
+        if (!chatInput.trim()) return;
+        const userMsg = chatInput;
+        setChatMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
+        setChatInput('');
+        setChatLoading(true);
+
+        try {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ message: userMsg })
+          });
+          const data = await res.json();
+          setChatMessages(prev => [...prev, { sender: 'ai', text: data.reply }]);
+        } catch (err) {
+          setChatMessages(prev => [...prev, { sender: 'ai', text: 'Error contacting regulatory intelligence engine.' }]);
+        } finally {
+          setChatLoading(false);
+        }
+      };
+
       // Document Verification Submission
       const handleVerify = async (e) => {
         e.preventDefault();
@@ -359,7 +625,7 @@
         }
       };
 
-      // Instant 1-Click Demo Document Loader
+      // 1-Click Demo Document Loader
       const handleLoadDemo = async (type) => {
         setIsVerifying(true);
         setScanResult(null);
@@ -443,7 +709,7 @@
         }
       };
 
-      // Fetch and Display Certificate
+      // Fetch Certificate
       const handleOpenCertificate = async (docId) => {
         try {
           const res = await fetch(`/api/documents/${docId}/certificate`, {
@@ -483,7 +749,7 @@
       if (!token) {
         return (
           <div className="min-h-screen bg-white flex flex-col justify-center items-center p-6">
-            <div className="w-full max-w-md bg-white border border-gray-200 rounded-3xl shadow-xl p-8">
+            <div className="w-full max-w-md bg-white border border-gray-200 rounded-3xl shadow-xl p-8 transform transition hover:shadow-2xl">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="p-3 bg-forest-600 text-white rounded-2xl shadow-md">
                   <Icons.Shield />
@@ -497,7 +763,7 @@
               <h2 className="text-xl font-bold text-forest-600 mb-1">
                 {isRegistering ? 'Create Verification Account' : 'Officer & Citizen Sign In'}
               </h2>
-              <p className="text-xs text-gray-500 mb-6">OAuth 2.0 Protected • PostgreSQL / MySQL Ready • Immutable Audit Logs</p>
+              <p className="text-xs text-gray-500 mb-6">OAuth 2.0 Protected • DigiLocker API Ready • Immutable Audit Logs</p>
 
               {authError && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium">
@@ -552,7 +818,6 @@
                 </button>
               </form>
 
-              {/* Demo auto-fill button */}
               <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
                 <span>Demo Officer Credentials:</span>
                 <button
@@ -581,17 +846,17 @@
 
       // ---------------- MAIN WORKSPACE ----------------
       return (
-        <div className="flex flex-col h-screen bg-white">
-          {/* Statutory Header Bar (Inspired by PRAMAN System) */}
-          <div className="bg-forest-900 text-white px-6 py-2 flex flex-col md:flex-row items-center justify-between text-[11px] border-b border-forest-800">
+        <div className="flex flex-col h-screen bg-white overflow-hidden">
+          {/* Statutory Header Bar */}
+          <div className="bg-forest-900 text-white px-4 md:px-6 py-2 flex flex-col md:flex-row items-center justify-between text-[11px] border-b border-forest-800 z-30">
             <div className="flex items-center space-x-2 font-semibold">
               <span className="text-amber-400">अखिल भारतीय तकनीकी शिक्षा परिषद</span>
               <span>• ALL INDIA COUNCIL FOR TECHNICAL EDUCATION</span>
-              <span className="text-forest-300 hidden md:inline">| A Statutory Body of the Government of India</span>
+              <span className="text-forest-300 hidden lg:inline">| A Statutory Body of the Government of India</span>
             </div>
-            <div className="flex items-center space-x-4 mt-1 md:mt-0">
+            <div className="flex items-center space-x-3 mt-1 md:mt-0">
               <span className="bg-forest-800 text-forest-200 px-2 py-0.5 rounded font-mono text-[10px]">APH 2026-27 Portal</span>
-              <span className="text-forest-300">Helpline: 011-29581000</span>
+              <span className="text-forest-300 hidden sm:inline">Helpline: 011-29581000</span>
               <button
                 onClick={() => setShowTechModal(true)}
                 className="bg-forest-700 hover:bg-forest-600 text-white px-2.5 py-0.5 rounded text-[10px] font-bold transition flex items-center space-x-1"
@@ -603,30 +868,43 @@
           </div>
 
           {/* Yellow Statutory Notice Banner */}
-          <div className="bg-amber-50 border-b border-amber-200 text-amber-900 px-6 py-2 flex items-center justify-between text-xs">
-            <div className="flex items-center space-x-2">
-              <span className="bg-amber-500 text-white px-2 py-0.5 rounded font-black text-[10px] tracking-wider uppercase">
+          <div className="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 md:px-6 py-1.5 flex items-center justify-between text-xs z-20">
+            <div className="flex items-center space-x-2 truncate">
+              <span className="bg-amber-500 text-white px-2 py-0.5 rounded font-black text-[10px] tracking-wider uppercase shrink-0">
                 Statutory Notice
               </span>
-              <span>
+              <span className="truncate">
                 Automated observations provide evidentiary assistance under AICTE APH 2026-27 guidelines. Final regulatory decisions rest exclusively with appointed officers.
               </span>
             </div>
             {resetMsg && (
-              <span className="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded text-[11px]">
+              <span className="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded text-[11px] shrink-0 ml-2">
                 {resetMsg}
               </span>
             )}
           </div>
 
-          <div className="flex flex-1 overflow-hidden">
-            {/* Sidebar */}
-            <aside className="w-64 border-r border-gray-200 bg-white flex flex-col justify-between shrink-0">
-              <div>
+          <div className="flex flex-1 overflow-hidden relative">
+            {/* Mobile Hamburger Button */}
+            <div className="md:hidden absolute top-3 left-4 z-40">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 bg-forest-50 border border-forest-200 text-forest-700 rounded-xl shadow-sm hover:bg-forest-100 transition"
+                title="Toggle Menu"
+              >
+                <Icons.Menu />
+              </button>
+            </div>
+
+            {/* Sidebar (Responsive with Smooth Slide-in on Mobile) */}
+            <aside className={`fixed md:static inset-y-0 left-0 z-40 w-64 border-r border-gray-200 bg-white flex flex-col justify-between shrink-0 transform transition-transform duration-300 ease-in-out ${
+              mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
+            }`}>
+              <div className="overflow-y-auto custom-scroll">
                 {/* Brand Header */}
                 <div className="p-5 border-b border-gray-100 flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-forest-600 text-white rounded-xl shadow-md">
+                    <div className="p-2 bg-forest-600 text-white rounded-xl shadow-md animate-pulse-slow">
                       <Icons.Shield />
                     </div>
                     <div>
@@ -634,10 +912,11 @@
                       <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">Regulatory Verification</p>
                     </div>
                   </div>
+                  <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-gray-400 hover:text-gray-600 text-xl font-bold">×</button>
                 </div>
 
                 {/* Navigation Links */}
-                <div className="px-4 py-2">
+                <div className="px-3 py-3">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-1">
                     Regulatory Navigation
                   </p>
@@ -647,6 +926,11 @@
                       { id: 'applications', label: 'Applications', icon: Icons.FileText },
                       { id: 'vault', label: 'Evidence Archive', icon: Icons.Archive },
                       { id: 'ai-verify', label: 'AI Verification Studio', icon: Icons.Cpu },
+                      { id: 'digilocker', label: 'DigiLocker & Gov APIs', icon: Icons.DigiLocker },
+                      { id: 'biometrics', label: 'Biometric Face & Liveness', icon: Icons.Face },
+                      { id: 'template-compare', label: 'Template Inspector', icon: Icons.Compare },
+                      { id: 'fraud-intel', label: 'AI Fraud Intelligence', icon: Icons.FraudNet },
+                      { id: 'blockchain', label: 'Blockchain Certificates', icon: Icons.Blockchain },
                       { id: 'rules', label: 'Compliance Rules', icon: Icons.Rules },
                       { id: 'new-application', label: 'New Application', icon: Icons.PlusCircle },
                     ].map((item) => {
@@ -655,43 +939,42 @@
                       return (
                         <button
                           key={item.id}
-                          onClick={() => { setActiveTab(item.id); setSearchQuery(''); setStatusFilter('ALL'); }}
-                          className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-bold transition ${
+                          onClick={() => {
+                            setActiveTab(item.id);
+                            setSearchQuery('');
+                            setStatusFilter('ALL');
+                            setMobileMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-bold transition duration-150 ${
                             isActive
-                              ? 'bg-forest-50 text-forest-600 border-l-4 border-forest-600 font-black'
+                              ? 'bg-forest-50 text-forest-600 border-l-4 border-forest-600 shadow-sm font-black'
                               : 'text-gray-600 hover:bg-gray-50'
                           }`}
                         >
                           <Icon />
-                          <span>{item.label}</span>
+                          <span className="truncate">{item.label}</span>
                         </button>
                       );
                     })}
                   </nav>
                 </div>
 
-                {/* Quick Action: Start Evidence Archive Vault */}
-                <div className="p-4 pt-2">
-                  <button
-                    onClick={() => setShowStartVaultModal(true)}
-                    className="w-full py-2.5 px-3 bg-forest-50 hover:bg-forest-100 text-forest-700 text-xs font-bold rounded-xl border border-forest-200 flex items-center justify-center space-x-2 transition"
-                  >
-                    <Icons.Archive />
-                    <span>Start Archive Vault</span>
-                  </button>
+                {/* Quick 3D Holographic Seal Preview */}
+                <div className="px-4 py-2">
+                  <ThreeDHologramShield />
                 </div>
               </div>
 
               {/* Officer Profile & Signout */}
-              <div className="p-4 border-t border-gray-100">
+              <div className="p-4 border-t border-gray-100 bg-gray-50/50">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-forest-600 text-white flex items-center justify-center font-bold text-xs">
+                  <div className="flex items-center space-x-2 truncate">
+                    <div className="w-8 h-8 rounded-full bg-forest-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
                       {selectedPersona.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                     </div>
-                    <div>
-                      <p className="text-xs font-bold text-gray-800 leading-tight">{selectedPersona.name}</p>
-                      <p className="text-[10px] text-gray-400 truncate max-w-[120px]">{selectedPersona.role}</p>
+                    <div className="truncate">
+                      <p className="text-xs font-bold text-gray-800 leading-tight truncate">{selectedPersona.name}</p>
+                      <p className="text-[10px] text-gray-400 truncate">{selectedPersona.role}</p>
                     </div>
                   </div>
                   <button
@@ -705,11 +988,19 @@
               </div>
             </aside>
 
+            {/* Mobile Backdrop Overlay */}
+            {mobileMenuOpen && (
+              <div
+                onClick={() => setMobileMenuOpen(false)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-xs z-30 md:hidden"
+              />
+            )}
+
             {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto bg-white p-8 custom-scroll">
+            <main className="flex-1 overflow-y-auto bg-white p-4 md:p-8 custom-scroll">
               {/* Top Bar with Persona Switcher & Reset Button */}
-              <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center pb-6 border-b border-gray-100 mb-8 gap-4">
-                <div>
+              <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center pb-6 border-b border-gray-100 mb-6 gap-4">
+                <div className="pl-12 md:pl-0">
                   <div className="flex items-center space-x-2 mb-1">
                     <span className="bg-forest-100 text-forest-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                       Academic Year 2026-27
@@ -719,38 +1010,43 @@
                       National Approval Process Handbook (APH)
                     </span>
                   </div>
-                  <h1 className="text-2xl font-black text-forest-600 tracking-tight">
+                  <h1 className="text-xl md:text-2xl font-black text-forest-600 tracking-tight">
                     {activeTab === 'dashboard' && 'Verification & Audit Operations Dashboard'}
                     {activeTab === 'applications' && 'Applications Review Queue'}
                     {activeTab === 'vault' && 'Evidence Archive & Encrypted Document Vault'}
                     {activeTab === 'ai-verify' && 'Document Authenticity Verification Studio'}
+                    {activeTab === 'digilocker' && 'DigiLocker & National Government Gateway'}
+                    {activeTab === 'biometrics' && 'Biometric Face Match & Anti-Spoof Liveness'}
+                    {activeTab === 'template-compare' && 'Master Template Layout & Font Inspector'}
+                    {activeTab === 'fraud-intel' && 'AI Fraud Intelligence & Duplicate Graph'}
+                    {activeTab === 'blockchain' && 'Blockchain-Anchored Tamper-Proof Certificates'}
                     {activeTab === 'rules' && 'Statutory APH 2026-27 Compliance Rules Engine'}
                     {activeTab === 'new-application' && 'Submit New Regulatory Application'}
                   </h1>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Active Session: <strong className="text-gray-700">{selectedPersona.name}</strong> ({selectedPersona.role}). Real-time applications, AI-extracted evidence, and statutory deficiency notices.
+                    Active Session: <strong className="text-gray-700">{selectedPersona.name}</strong> ({selectedPersona.role}).
                   </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  {/* Reset Demo Records Button (From PRAMAN Reference) */}
+                <div className="flex flex-wrap items-center gap-2 self-end lg:self-auto">
+                  {/* Reset Demo Records Button */}
                   <button
                     onClick={handleResetDemo}
-                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition border border-gray-300"
+                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition border border-gray-300 shadow-xs"
                     title="Restore demo applications and documents to baseline"
                   >
                     <Icons.Refresh />
                     <span>Reset Demo Records</span>
                   </button>
 
-                  {/* Persona Switcher Dropdown (From PRAMAN Reference) */}
+                  {/* Persona Switcher Dropdown */}
                   <div className="relative">
                     <button
                       onClick={() => setShowPersonaDropdown(!showPersonaDropdown)}
-                      className="px-3 py-1.5 bg-forest-50 hover:bg-forest-100 text-forest-800 text-xs font-bold rounded-xl border border-forest-200 flex items-center space-x-2 transition"
+                      className="px-3 py-1.5 bg-forest-50 hover:bg-forest-100 text-forest-800 text-xs font-bold rounded-xl border border-forest-200 flex items-center space-x-1.5 transition shadow-xs"
                     >
                       <Icons.UserCheck />
-                      <span>{selectedPersona.name}</span>
+                      <span className="truncate max-w-[120px]">{selectedPersona.name}</span>
                       <span className="text-[10px] text-forest-600">▾</span>
                     </button>
 
@@ -786,10 +1082,10 @@
 
                   <button
                     onClick={() => setActiveTab('ai-verify')}
-                    className="px-4 py-2 bg-forest-600 hover:bg-forest-700 text-white text-xs font-bold rounded-xl shadow-sm flex items-center space-x-2 transition"
+                    className="px-4 py-2 bg-forest-600 hover:bg-forest-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center space-x-2 transition"
                   >
                     <Icons.Upload />
-                    <span>New Verification</span>
+                    <span>Verify Document</span>
                   </button>
                 </div>
               </header>
@@ -797,7 +1093,7 @@
               {/* ---------------- 1. DASHBOARD TAB ---------------- */}
               {activeTab === 'dashboard' && (
                 <div className="space-y-8">
-                  {/* Manager Command Banner */}
+                  {/* Command Banner */}
                   {userMode === 'manager' && (
                     <div className="bg-forest-50 border border-forest-200 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                       <div>
@@ -806,62 +1102,68 @@
                           <span>Verification & Audit Command Center</span>
                         </h3>
                         <p className="text-xs text-forest-600 mt-0.5">
-                          You have full statutory authority to adjudicate, stamp official certificates, or issue deficiency notices.
+                          Directly adjudicate regulatory filings, pull DigiLocker records, or stamp blockchain certificates.
                         </p>
                       </div>
-                      <div className="flex space-x-2">
+                      <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => setActiveTab('applications')}
                           className="px-3.5 py-2 bg-forest-600 text-white text-xs font-bold rounded-xl hover:bg-forest-700 shadow-sm"
                         >
-                          Review Pending Queue ({stats.awaiting_review || applications.filter(a => a.status === 'UNDER_REVIEW').length})
+                          Review Applications ({stats.awaiting_review || applications.filter(a => a.status === 'UNDER_REVIEW').length})
+                        </button>
+                        <button
+                          onClick={() => setActiveTab('fraud-intel')}
+                          className="px-3.5 py-2 bg-red-600 text-white text-xs font-bold rounded-xl hover:bg-red-700 shadow-sm"
+                        >
+                          Fraud Net Alerts ({stats.deficiencies_flagged})
                         </button>
                       </div>
                     </div>
                   )}
 
-                  {/* 6 Exact KPI Metric Cards Matching Reference System */}
+                  {/* 6 KPI Metric Cards */}
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white">
+                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white hover:border-forest-600 transition">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Applications</p>
                       <h3 className="text-2xl font-black text-forest-600 mt-2">{stats.total_applications || 5}</h3>
-                      <p className="text-[10px] text-gray-400 mt-1">All active filings</p>
+                      <p className="text-[10px] text-gray-400 mt-1">Active regulatory filings</p>
                     </div>
 
-                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white">
+                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white hover:border-blue-500 transition">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Awaiting Review</p>
                       <h3 className="text-2xl font-black text-blue-600 mt-2">{stats.awaiting_review || 1}</h3>
-                      <p className="text-[10px] text-gray-400 mt-1">In document intake</p>
+                      <p className="text-[10px] text-gray-400 mt-1">Pending officer review</p>
                     </div>
 
-                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white">
+                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white hover:border-amber-500 transition">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Clarification Hold</p>
                       <h3 className="text-2xl font-black text-amber-600 mt-2">{stats.clarification_hold || 1}</h3>
                       <p className="text-[10px] text-gray-400 mt-1">Pending response</p>
                     </div>
 
-                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white">
+                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white hover:border-emerald-500 transition">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Review Completed</p>
                       <h3 className="text-2xl font-black text-emerald-600 mt-2">{stats.review_completed || 1}</h3>
                       <p className="text-[10px] text-gray-400 mt-1">Preliminary finalized</p>
                     </div>
 
-                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white">
+                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white hover:border-forest-600 transition">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Documents Processed</p>
                       <h3 className="text-2xl font-black text-forest-600 mt-2">{stats.documents_processed || stats.total_scanned || 10}</h3>
                       <p className="text-[10px] text-gray-400 mt-1">SHA-256 hashed & locked</p>
                     </div>
 
-                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white">
+                    <div className="p-5 border border-gray-200 rounded-2xl shadow-sm bg-white hover:border-red-500 transition">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Deficiencies Flagged</p>
                       <h3 className="text-2xl font-black text-red-600 mt-2">{stats.deficiencies_flagged || 4}</h3>
                       <p className="text-[10px] text-gray-400 mt-1">Non-compliant checks</p>
                     </div>
                   </div>
 
-                  {/* 3 Analytics Visualization Panels (Status Distribution, Review Velocity, Top Deficiencies) */}
+                  {/* 3 Analytics Visualization Panels */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Panel 1: Application Status Distribution */}
+                    {/* Status Distribution */}
                     <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white flex flex-col justify-between">
                       <div>
                         <div className="flex justify-between items-center mb-4">
@@ -899,11 +1201,11 @@
                         </div>
                       </div>
                       <p className="text-[11px] text-gray-400 pt-4 border-t border-gray-100 mt-4">
-                        Distribution calculated across active intake batches.
+                        Real-time distribution across active intake batches.
                       </p>
                     </div>
 
-                    {/* Panel 2: Weekly Review Velocity */}
+                    {/* Weekly Review Velocity */}
                     <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white flex flex-col justify-between">
                       <div>
                         <div className="flex justify-between items-center mb-4">
@@ -933,7 +1235,7 @@
                       </p>
                     </div>
 
-                    {/* Panel 3: Top Regulatory Deficiencies by Clause */}
+                    {/* Top Regulatory Deficiencies by Clause */}
                     <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white flex flex-col justify-between">
                       <div>
                         <div className="flex justify-between items-center mb-4">
@@ -1015,7 +1317,6 @@
                       </p>
                     </div>
                     <div className="flex items-center space-x-3 w-full sm:w-auto">
-                      {/* Search Input */}
                       <div className="relative flex-1 sm:w-64">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <Icons.Search />
@@ -1028,7 +1329,6 @@
                           className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-xs focus:ring-2 focus:ring-forest-600 focus:outline-none"
                         />
                       </div>
-                      {/* Status Filter */}
                       <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
@@ -1043,7 +1343,7 @@
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white">
+                  <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
                         <tr className="border-b border-gray-100 text-gray-400 uppercase">
@@ -1098,7 +1398,7 @@
                 </div>
               )}
 
-              {/* ---------------- 3. EVIDENCE ARCHIVE / DOCUMENT VAULT TAB ---------------- */}
+              {/* ---------------- 3. EVIDENCE ARCHIVE TAB ---------------- */}
               {activeTab === 'vault' && (
                 <div className="space-y-6">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -1129,58 +1429,56 @@
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse text-xs">
-                        <thead>
-                          <tr className="border-b border-gray-100 text-gray-400 uppercase">
-                            <th className="py-3 px-4">File Name</th>
-                            <th className="py-3 px-4">Category</th>
-                            <th className="py-3 px-4">Size</th>
-                            <th className="py-3 px-4">AI Verdict</th>
-                            <th className="py-3 px-4">Authenticity</th>
-                            <th className="py-3 px-4">SHA-256 Digest</th>
-                            <th className="py-3 px-4 text-right">Certificate</th>
+                  <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-gray-100 text-gray-400 uppercase">
+                          <th className="py-3 px-4">File Name</th>
+                          <th className="py-3 px-4">Category</th>
+                          <th className="py-3 px-4">Size</th>
+                          <th className="py-3 px-4">AI Verdict</th>
+                          <th className="py-3 px-4">Authenticity</th>
+                          <th className="py-3 px-4">SHA-256 Digest</th>
+                          <th className="py-3 px-4 text-right">Certificate</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {filteredDocuments.map((doc) => (
+                          <tr key={doc.id} className="hover:bg-gray-50 transition">
+                            <td className="py-3 px-4 font-semibold text-gray-900">{doc.original_name}</td>
+                            <td className="py-3 px-4 text-gray-600">{doc.category}</td>
+                            <td className="py-3 px-4 text-gray-400 font-mono">{doc.file_size_kb} KB</td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2.5 py-0.5 rounded-full font-bold ${
+                                doc.verdict === 'REAL' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
+                              }`}>
+                                {doc.verdict === 'REAL' ? 'AUTHENTIC' : (doc.verdict === 'FAKE' ? 'TAMPERED' : 'SUSPICIOUS')}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 font-bold text-forest-600">{doc.authenticity_score}%</td>
+                            <td className="py-3 px-4 font-mono text-[10px] text-gray-400">{doc.sha256_hash.slice(0, 18)}...</td>
+                            <td className="py-3 px-4 text-right">
+                              <button
+                                onClick={() => handleOpenCertificate(doc.id)}
+                                className="px-3 py-1.5 bg-forest-50 text-forest-700 border border-forest-200 rounded-lg font-bold text-[11px] hover:bg-forest-100 flex items-center space-x-1 ml-auto"
+                              >
+                                <Icons.Award />
+                                <span>Official Seal</span>
+                              </button>
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-50">
-                          {filteredDocuments.map((doc) => (
-                            <tr key={doc.id} className="hover:bg-gray-50 transition">
-                              <td className="py-3 px-4 font-semibold text-gray-900">{doc.original_name}</td>
-                              <td className="py-3 px-4 text-gray-600">{doc.category}</td>
-                              <td className="py-3 px-4 text-gray-400 font-mono">{doc.file_size_kb} KB</td>
-                              <td className="py-3 px-4">
-                                <span className={`px-2.5 py-0.5 rounded-full font-bold ${
-                                  doc.verdict === 'REAL' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
-                                }`}>
-                                  {doc.verdict === 'REAL' ? 'AUTHENTIC' : (doc.verdict === 'FAKE' ? 'TAMPERED' : 'SUSPICIOUS')}
-                                </span>
-                              </td>
-                              <td className="py-3 px-4 font-bold text-forest-600">{doc.authenticity_score}%</td>
-                              <td className="py-3 px-4 font-mono text-[10px] text-gray-400">{doc.sha256_hash.slice(0, 18)}...</td>
-                              <td className="py-3 px-4 text-right">
-                                <button
-                                  onClick={() => handleOpenCertificate(doc.id)}
-                                  className="px-3 py-1.5 bg-forest-50 text-forest-700 border border-forest-200 rounded-lg font-bold text-[11px] hover:bg-forest-100 flex items-center space-x-1 ml-auto"
-                                >
-                                  <Icons.Award />
-                                  <span>Official Seal</span>
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               )}
 
-              {/* ---------------- 4. AI VERIFICATION STUDIO ---------------- */}
+              {/* ---------------- 4. AI VERIFICATION STUDIO TAB ---------------- */}
               {activeTab === 'ai-verify' && (
                 <div className="max-w-4xl mx-auto space-y-6">
                   {/* 1-Click Presentation Demo Bar */}
-                  <div className="bg-gradient-to-r from-forest-50 to-white border border-forest-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="bg-gradient-to-r from-forest-50 to-white border border-forest-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
                     <div className="flex items-center space-x-2">
                       <span className="p-1.5 bg-forest-600 text-white rounded-lg text-xs">⚡</span>
                       <div>
@@ -1188,7 +1486,7 @@
                         <p className="text-[11px] text-gray-500">Test automated tampering detection without manually finding files</p>
                       </div>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => handleLoadDemo('real')}
                         className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition"
@@ -1212,7 +1510,7 @@
 
                   {/* Upload Zone */}
                   <div className="border-2 border-dashed border-gray-300 rounded-3xl p-8 text-center bg-forest-50/20">
-                    <div className="w-12 h-12 bg-forest-100 text-forest-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 bg-forest-100 text-forest-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm">
                       <Icons.Upload />
                     </div>
                     <h2 className="text-lg font-bold text-forest-600">Upload Document for Authenticity Verification</h2>
@@ -1254,7 +1552,7 @@
                   {/* Inspection Report Card */}
                   {scanResult && (
                     <div className="border border-gray-200 rounded-2xl p-6 shadow-xl bg-white space-y-6">
-                      <div className="flex justify-between items-center border-b border-gray-100 pb-4">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-100 pb-4 gap-3">
                         <div>
                           <h3 className="text-lg font-bold text-forest-600">{scanResult.filename}</h3>
                           <p className="text-xs font-mono text-gray-400">SHA-256: {scanResult.sha256}</p>
@@ -1275,7 +1573,7 @@
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-4 gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="p-4 bg-gray-50 rounded-xl">
                           <p className="text-[10px] font-bold text-gray-400 uppercase">Authenticity</p>
                           <p className="text-2xl font-black text-forest-600">{scanResult.authenticity_score}%</p>
@@ -1285,12 +1583,12 @@
                           <p className="text-2xl font-black text-gray-800">{scanResult.ela_tamper_score}%</p>
                         </div>
                         <div className="p-4 bg-gray-50 rounded-xl">
-                          <p className="text-[10px] font-bold text-gray-400 uppercase">Metadata Integrity</p>
-                          <p className="text-sm font-bold text-gray-700 mt-1">{scanResult.inspection_checks?.metadata_integrity || 'PASSED'}</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase">Template Match</p>
+                          <p className="text-2xl font-black text-forest-700">{scanResult.template_match_score || '98.5%'}</p>
                         </div>
                         <div className="p-4 bg-gray-50 rounded-xl">
                           <p className="text-[10px] font-bold text-gray-400 uppercase">Risk Level</p>
-                          <p className={`text-sm font-bold mt-1 ${scanResult.risk_level === 'LOW' ? 'text-emerald-600' : 'text-red-600'}`}>
+                          <p className={`text-sm font-bold mt-2 ${scanResult.risk_level === 'LOW' ? 'text-emerald-600' : 'text-red-600'}`}>
                             {scanResult.risk_level} RISK
                           </p>
                         </div>
@@ -1298,7 +1596,7 @@
 
                       {/* Interactive XAI Bounding Box Viewer */}
                       <div className="border border-gray-200 rounded-xl p-5 bg-gray-50">
-                        <div className="flex justify-between items-center mb-3">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
                           <div>
                             <h4 className="text-xs font-bold text-forest-800 uppercase flex items-center space-x-1.5">
                               <Icons.Eye />
@@ -1310,7 +1608,7 @@
                           </div>
                           <button
                             onClick={() => setViewHeatmap(!viewHeatmap)}
-                            className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-700 hover:bg-gray-100 transition"
+                            className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-700 hover:bg-gray-100 transition shadow-xs"
                           >
                             {viewHeatmap ? 'View Standard PDF' : 'View ELA Tamper Heatmap'}
                           </button>
@@ -1324,7 +1622,7 @@
                             <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/30 via-red-900/40 to-transparent pointer-events-none" />
                           )}
 
-                          <div className="space-y-2">
+                          <div className="space-y-1">
                             <p className="text-xs font-bold uppercase tracking-wider">{scanResult.filename}</p>
                             <p className="text-[11px] opacity-75">Classification: {category}</p>
                             <p className="text-[11px] opacity-75">Ingested Document Stream: 482.4 KB • SHA-256 Fingerprinted</p>
@@ -1354,13 +1652,13 @@
                           })}
 
                           <div className="border-t border-gray-200/50 pt-2 flex justify-between text-[10px] opacity-60">
-                            <span>Verified by VeriDoc AI Inspection Engine</span>
+                            <span>Verified by VERIDOC AI Inspection Engine</span>
                             <span>Timestamp: {new Date().toLocaleTimeString()}</span>
                           </div>
                         </div>
 
                         {activeDeficiency && (
-                          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800">
+                          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800 animate-fadeIn">
                             <p className="font-bold">Violated Regulation: {activeDeficiency.clause}</p>
                             <p className="mt-0.5">{activeDeficiency.detail}</p>
                           </div>
@@ -1394,15 +1692,459 @@
                 </div>
               )}
 
-              {/* ---------------- 5. COMPLIANCE RULES TAB ---------------- */}
-              {activeTab === 'rules' && (
-                <div className="space-y-6 max-w-4xl mx-auto">
-                  <div>
-                    <h2 className="text-lg font-bold text-forest-600">Statutory Compliance Rules Engine</h2>
-                    <p className="text-xs text-gray-400">
-                      National Approval Process Handbook (APH 2026-27) Statutory Clauses and Automated Verification Checkpoints
+              {/* ---------------- 5. DIGILOCKER & GOV APIS INTEGRATION TAB ---------------- */}
+              {activeTab === 'digilocker' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <div className="border-b border-gray-100 pb-4">
+                    <h2 className="text-lg font-bold text-forest-600 flex items-center space-x-2">
+                      <Icons.DigiLocker />
+                      <span>DigiLocker & National Government Gateway</span>
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Direct integration with Government of India National Academic Depository & e-KYC Repositories.
                     </p>
                   </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Pull Console */}
+                    <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-4">
+                      <h3 className="text-sm font-bold text-forest-700">Pull Verified e-Document via DigiLocker</h3>
+                      <form onSubmit={handleDigiLockerPull} className="space-y-3 text-xs">
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">Document Type</label>
+                          <select
+                            value={digiDocType}
+                            onChange={(e) => setDigiDocType(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-forest-600"
+                          >
+                            <option value="aadhaar">UIDAI Aadhaar (XML e-KYC)</option>
+                            <option value="pan">Income Tax PAN Card Verification</option>
+                            <option value="degree">National Academic Degree / Diploma</option>
+                            <option value="land_record">State Cadastral Land Registration Title</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">Government Identifier / Roll Number</label>
+                          <input
+                            type="text"
+                            value={digiIdNumber}
+                            onChange={(e) => setDigiIdNumber(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-forest-600"
+                            placeholder="e.g. 9812-4412-8801 or PAN #AAATA4912K"
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={digiLoading}
+                          className="w-full py-2.5 bg-forest-600 hover:bg-forest-700 text-white font-bold rounded-xl shadow-sm text-xs transition uppercase tracking-wider flex items-center justify-center space-x-2"
+                        >
+                          {digiLoading ? (
+                            <span>Querying Government Gateway...</span>
+                          ) : (
+                            <>
+                              <Icons.DigiLocker />
+                              <span>Execute DigiLocker Consent Pull</span>
+                            </>
+                          )}
+                        </button>
+                      </form>
+                    </div>
+
+                    {/* Verified Result Card */}
+                    <div className="border border-gray-200 rounded-2xl p-6 bg-forest-50/30 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-sm font-bold text-forest-800">DigiLocker Verified Credential</h3>
+                          {digiResult && (
+                            <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">
+                              DIGITALLY SIGNED
+                            </span>
+                          )}
+                        </div>
+
+                        {digiResult ? (
+                          <div className="space-y-3 text-xs bg-white p-4 rounded-xl border border-forest-200 shadow-xs">
+                            <div className="flex justify-between border-b border-gray-100 pb-2">
+                              <span className="text-gray-500">Issuer Authority:</span>
+                              <span className="font-bold text-gray-900">{digiResult.issuer}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-100 pb-2">
+                              <span className="text-gray-500">Citizen / Institute:</span>
+                              <span className="font-bold text-forest-700">{digiResult.verified_name}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-100 pb-2">
+                              <span className="text-gray-500">Masked ID:</span>
+                              <span className="font-mono text-gray-700">{digiResult.identifier_masked}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-100 pb-2">
+                              <span className="text-gray-500">Digital Signature:</span>
+                              <span className="font-mono text-[10px] text-emerald-700 font-bold">{digiResult.digital_signature}</span>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 block text-[10px]">DigiLocker URI:</span>
+                              <span className="font-mono text-[10px] text-gray-600 break-all">{digiResult.document_uri}</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-10 text-gray-400">
+                            <Icons.DigiLocker />
+                            <p className="text-xs mt-2">Enter credentials and execute pull to inspect live government certificates.</p>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-4">
+                        Protected by OAuth 2.0 PKCE and SHA-256 Consent Architecture.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ---------------- 6. BIOMETRICS & LIVENESS TAB ---------------- */}
+              {activeTab === 'biometrics' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <div className="border-b border-gray-100 pb-4">
+                    <h2 className="text-lg font-bold text-forest-600 flex items-center space-x-2">
+                      <Icons.Face />
+                      <span>Biometric Face Match & Anti-Spoof Liveness Engine</span>
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">
+                      PyTorch ArcFace deep learning embeddings match live applicant selfies with photo on official identity documents.
+                    </p>
+                  </div>
+
+                  {/* 3 Quick Simulation Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      onClick={() => handleBiometricTest('match')}
+                      className={`p-4 rounded-2xl border text-left transition ${
+                        bioMode === 'match' && bioResult ? 'border-emerald-500 bg-emerald-50/50' : 'border-gray-200 bg-white hover:border-emerald-300'
+                      }`}
+                    >
+                      <p className="font-bold text-xs text-emerald-800">🟢 Test Genuine Match</p>
+                      <p className="text-[11px] text-gray-500 mt-1">Selfie matches ID photo + High Liveness (0% Spoof)</p>
+                    </button>
+                    <button
+                      onClick={() => handleBiometricTest('mismatch')}
+                      className={`p-4 rounded-2xl border text-left transition ${
+                        bioMode === 'mismatch' && bioResult ? 'border-red-500 bg-red-50/50' : 'border-gray-200 bg-white hover:border-red-300'
+                      }`}
+                    >
+                      <p className="font-bold text-xs text-red-800">🔴 Test Face Mismatch</p>
+                      <p className="text-[11px] text-gray-500 mt-1">Different person detected (Cosine distance > 0.65)</p>
+                    </button>
+                    <button
+                      onClick={() => handleBiometricTest('spoof')}
+                      className={`p-4 rounded-2xl border text-left transition ${
+                        bioMode === 'spoof' && bioResult ? 'border-amber-500 bg-amber-50/50' : 'border-gray-200 bg-white hover:border-amber-300'
+                      }`}
+                    >
+                      <p className="font-bold text-xs text-amber-800">🟡 Test Photo Spoofing</p>
+                      <p className="text-[11px] text-gray-500 mt-1">2D screen / print attack detected by Liveness Filter</p>
+                    </button>
+                  </div>
+
+                  {/* Interactive Facial Landmark Inspector */}
+                  <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Live Selfie Canvas */}
+                      <div className="relative border-2 border-dashed border-forest-300 rounded-2xl p-6 bg-forest-50/20 text-center flex flex-col items-center justify-center h-64 overflow-hidden">
+                        <div className="w-24 h-24 rounded-full border-4 border-forest-600 flex items-center justify-center bg-white shadow-md mb-2 relative">
+                          <Icons.Face />
+                          <div className="absolute inset-0 rounded-full border border-forest-400 animate-ping opacity-25"></div>
+                        </div>
+                        <p className="text-xs font-bold text-forest-900">Live Applicant Selfie Feed</p>
+                        <p className="text-[10px] text-gray-500 mt-1">68 Facial Landmark Points Active</p>
+                        <span className="mt-2 px-2.5 py-0.5 bg-forest-100 text-forest-800 text-[10px] font-mono font-bold rounded-full">
+                          Anti-Spoofing: Active
+                        </span>
+                      </div>
+
+                      {/* ID Document Extracted Photo */}
+                      <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-6 bg-gray-50 text-center flex flex-col items-center justify-center h-64">
+                        <div className="w-24 h-24 rounded-xl border-2 border-gray-400 flex items-center justify-center bg-white shadow-md mb-2">
+                          <Icons.FileText />
+                        </div>
+                        <p className="text-xs font-bold text-gray-800">Document Extracted Portrait</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Passport / Aadhaar Face Crop (180x220px)</p>
+                        <span className="mt-2 px-2.5 py-0.5 bg-gray-200 text-gray-700 text-[10px] font-mono font-bold rounded-full">
+                          Resolution: 300 DPI
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Result Metrics */}
+                    {bioResult && (
+                      <div className="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <h4 className="text-xs font-bold text-forest-800 uppercase">Biometric Evaluation Verdict</h4>
+                          <span className={`px-3 py-1 rounded-full text-xs font-black ${
+                            bioResult.status_code === 'PASSED'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {bioResult.verdict}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="p-3 bg-white rounded-lg border border-gray-200">
+                            <span className="text-[10px] text-gray-400 block font-bold">Face Match Score</span>
+                            <span className="text-lg font-black text-forest-700">{bioResult.match_confidence}%</span>
+                          </div>
+                          <div className="p-3 bg-white rounded-lg border border-gray-200">
+                            <span className="text-[10px] text-gray-400 block font-bold">Liveness Score</span>
+                            <span className={`text-lg font-black ${bioResult.liveness_score > 50 ? 'text-emerald-600' : 'text-red-600'}`}>
+                              {bioResult.liveness_score}%
+                            </span>
+                          </div>
+                          <div className="p-3 bg-white rounded-lg border border-gray-200">
+                            <span className="text-[10px] text-gray-400 block font-bold">Spoof Attack Detected</span>
+                            <span className={`text-sm font-bold block mt-1 ${bioResult.spoof_detected ? 'text-red-600' : 'text-emerald-600'}`}>
+                              {bioResult.spoof_detected ? 'YES (FLAGGED)' : 'NO (PASSED)'}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-700 pt-2 border-t border-gray-200">
+                          <strong>AI Analysis:</strong> {bioResult.explanation}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ---------------- 7. MASTER TEMPLATE INSPECTOR TAB ---------------- */}
+              {activeTab === 'template-compare' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <div className="border-b border-gray-100 pb-4">
+                    <h2 className="text-lg font-bold text-forest-600 flex items-center space-x-2">
+                      <Icons.Compare />
+                      <span>Master Template Overlay & Layout Discrepancy Inspector</span>
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Compares uploaded filings with official Government Gazette master templates to flag shifted signatures and altered fonts.
+                    </p>
+                  </div>
+
+                  {templateComparison && (
+                    <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-xs font-bold text-gray-500 uppercase">Target Template</p>
+                          <h3 className="text-sm font-bold text-forest-700">{templateComparison.master_template_name}</h3>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs font-bold text-gray-500 uppercase">Template Geometric Fit</p>
+                          <p className="text-xl font-black text-forest-600">{templateComparison.comparison_score}%</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3 pt-2">
+                        <p className="text-xs font-bold text-gray-700 uppercase">Detected Structural Discrepancies:</p>
+                        {templateComparison.discrepancies.map((d, i) => (
+                          <div key={i} className="p-3 bg-amber-50/50 border border-amber-200 rounded-xl flex items-center justify-between text-xs">
+                            <div>
+                              <span className="font-bold text-amber-900">{d.type}</span>
+                              <p className="text-[11px] text-gray-600 mt-0.5">{d.location} — {d.delta}</p>
+                            </div>
+                            <span className="px-2 py-0.5 bg-amber-200 text-amber-900 text-[10px] font-bold rounded">
+                              {d.verdict}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ---------------- 8. AI FRAUD INTELLIGENCE TAB ---------------- */}
+              {activeTab === 'fraud-intel' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <div className="border-b border-gray-100 pb-4">
+                    <h2 className="text-lg font-bold text-forest-600 flex items-center space-x-2">
+                      <Icons.FraudNet />
+                      <span>AI Fraud Intelligence Engine & Duplicate Graph</span>
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Scans cross-institutional datasets for duplicate land plots, reused faculty credentials, and syndicates.
+                    </p>
+                  </div>
+
+                  {fraudIntelligence && (
+                    <div className="space-y-6">
+                      {/* Metric Banner */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="p-4 border border-gray-200 rounded-2xl bg-white shadow-sm">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase">Cross-Entity Risk</span>
+                          <h3 className="text-2xl font-black text-amber-600 mt-1">{fraudIntelligence.overall_network_risk}</h3>
+                        </div>
+                        <div className="p-4 border border-gray-200 rounded-2xl bg-white shadow-sm">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase">Fraud Detection Rate</span>
+                          <h3 className="text-2xl font-black text-forest-600 mt-1">{fraudIntelligence.fraud_detection_rate}</h3>
+                        </div>
+                        <div className="p-4 border border-gray-200 rounded-2xl bg-white shadow-sm">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase">Composite Risk Score</span>
+                          <h3 className="text-2xl font-black text-forest-700 mt-1">{fraudIntelligence.composite_risk_score} / 100</h3>
+                        </div>
+                      </div>
+
+                      {/* Duplicate Application Network */}
+                      <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-4">
+                        <h3 className="text-sm font-bold text-forest-700">Cross-Institutional Duplicate Detections</h3>
+                        <div className="space-y-3">
+                          {fraudIntelligence.cross_institutional_duplicates.map((item, idx) => (
+                            <div key={idx} className="p-4 bg-red-50/50 border border-red-200 rounded-xl space-y-2 text-xs">
+                              <div className="flex justify-between items-center">
+                                <span className="font-bold text-red-900">{item.institution}</span>
+                                <span className="px-2 py-0.5 bg-red-600 text-white font-bold rounded text-[10px]">
+                                  {item.risk} (Match: {item.confidence}%)
+                                </span>
+                              </div>
+                              <p className="text-gray-700">
+                                Collides with: <strong className="text-gray-900">{item.matched_with}</strong>
+                              </p>
+                              <p className="text-[11px] text-red-700 font-mono">
+                                ⚠ {item.shared_attribute}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Pattern Tracker */}
+                      <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-3">
+                        <h3 className="text-sm font-bold text-forest-700">Suspicious Behavioral Patterns</h3>
+                        {fraudIntelligence.suspicious_patterns.map((p, idx) => (
+                          <div key={idx} className="p-3 bg-gray-50 rounded-xl border border-gray-200 flex justify-between items-center text-xs">
+                            <div>
+                              <span className="font-semibold text-gray-800">{p.pattern}</span>
+                              <span className="text-[10px] text-gray-400 block mt-0.5">Frequency: {p.frequency} occurrences</span>
+                            </div>
+                            <span className="px-2 py-0.5 bg-gray-200 text-gray-700 font-bold rounded text-[10px]">
+                              {p.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ---------------- 9. BLOCKCHAIN CERTIFICATES TAB ---------------- */}
+              {activeTab === 'blockchain' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <div className="border-b border-gray-100 pb-4">
+                    <h2 className="text-lg font-bold text-forest-600 flex items-center space-x-2">
+                      <Icons.Blockchain />
+                      <span>Blockchain Verification Ledger & Public QR Resolver</span>
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Every verified document is stamped with a SHA-256 Merkle proof anchored on the regulatory ledger.
+                    </p>
+                  </div>
+
+                  {/* Verification Lookup Bar */}
+                  <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-4">
+                    <h3 className="text-sm font-bold text-forest-700">Query Blockchain Ledger via Verification ID</h3>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={blockchainLookupId}
+                        onChange={(e) => setBlockchainLookupId(e.target.value)}
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-forest-600"
+                        placeholder="e.g. VDOC-CHAIN-99210-C"
+                      />
+                      <button
+                        onClick={() => handleBlockchainLookup(blockchainLookupId)}
+                        className="px-4 py-2 bg-forest-600 text-white font-bold rounded-xl text-xs hover:bg-forest-700 transition"
+                      >
+                        Verify on Chain
+                      </button>
+                    </div>
+
+                    {blockchainData && (
+                      <div className="p-5 bg-forest-50/50 rounded-2xl border border-forest-200 space-y-3 text-xs animate-fadeIn">
+                        <div className="flex justify-between items-center border-b border-forest-200 pb-2">
+                          <span className="font-bold text-forest-900">Verification ID: {blockchainData.verification_id}</span>
+                          <span className="bg-emerald-600 text-white font-bold px-2 py-0.5 rounded text-[10px]">
+                            {blockchainData.tamper_status}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <span className="text-[10px] text-gray-500 uppercase block font-bold">Block Height</span>
+                            <span className="font-mono font-bold text-forest-800">#{blockchainData.block_number}</span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-gray-500 uppercase block font-bold">Timestamp</span>
+                            <span className="font-mono text-gray-700">{blockchainData.timestamp}</span>
+                          </div>
+                          <div className="col-span-2">
+                            <span className="text-[10px] text-gray-500 uppercase block font-bold">Merkle Proof Root</span>
+                            <span className="font-mono text-[10px] text-gray-700 break-all">{blockchainData.merkle_root}</span>
+                          </div>
+                          <div className="col-span-2">
+                            <span className="text-[10px] text-gray-500 uppercase block font-bold">Consensus Node</span>
+                            <span className="text-gray-800 font-semibold">{blockchainData.validator_node}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ---------------- 10. COMPLIANCE RULES TAB ---------------- */}
+              {activeTab === 'rules' && (
+                <div className="space-y-6 max-w-4xl mx-auto">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                      <h2 className="text-lg font-bold text-forest-600">Statutory Compliance Rules Engine</h2>
+                      <p className="text-xs text-gray-400">
+                        National Approval Process Handbook (APH 2026-27) Statutory Clauses and Automated Verification Checkpoints
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleRunComplianceAudit}
+                      className="px-3.5 py-2 bg-forest-600 hover:bg-forest-700 text-white font-bold rounded-xl text-xs transition shadow-sm"
+                    >
+                      Audit Missing Mandatory Fields
+                    </button>
+                  </div>
+
+                  {complianceAudit && (
+                    <div className="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-3 text-xs animate-fadeIn">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-bold text-amber-900">AI Compliance Readiness: {complianceAudit.overall_compliance_readiness}</h4>
+                        <span className="text-xs text-gray-500">{complianceAudit.regulation_evaluated}</span>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-bold text-gray-700">Missing Mandatory Field Checks:</p>
+                        {complianceAudit.mandatory_field_checks.map((f, i) => (
+                          <div key={i} className="flex justify-between p-2 bg-white rounded-lg border border-gray-200">
+                            <span>{f.field}</span>
+                            <span className={`font-bold text-[10px] px-2 py-0.5 rounded ${
+                              f.status === 'COMPLIANT' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                              {f.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="pt-2 border-t border-amber-200">
+                        <p className="font-bold text-red-900">Recommended Corrective Actions:</p>
+                        <ul className="list-disc pl-5 space-y-1 text-gray-700 mt-1">
+                          {complianceAudit.recommended_actions.map((act, idx) => (
+                            <li key={idx}>{act}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 gap-4">
                     {complianceRules.map((r, i) => (
@@ -1429,7 +2171,7 @@
                 </div>
               )}
 
-              {/* ---------------- 6. NEW APPLICATION TAB ---------------- */}
+              {/* ---------------- 11. NEW APPLICATION TAB ---------------- */}
               {activeTab === 'new-application' && (
                 <div className="max-w-xl mx-auto border border-gray-200 rounded-2xl p-8 bg-white shadow-sm">
                   <h2 className="text-xl font-bold text-forest-600 mb-1">Submit New Regulatory Application</h2>
@@ -1491,6 +2233,68 @@
             </main>
           </div>
 
+          {/* ---------------- FLOATING AI REGULATORY COPILOT CHATBOT ---------------- */}
+          <div className="fixed bottom-6 right-6 z-50">
+            {!chatOpen ? (
+              <button
+                onClick={() => setChatOpen(true)}
+                className="p-3.5 bg-forest-600 hover:bg-forest-700 text-white rounded-full shadow-2xl flex items-center space-x-2 transition transform hover:scale-105"
+                title="Open AI Regulatory Copilot"
+              >
+                <Icons.Chat />
+                <span className="text-xs font-bold pr-1 hidden sm:inline">AI Regulatory Assistant</span>
+              </button>
+            ) : (
+              <div className="w-80 sm:w-96 bg-white border border-gray-200 rounded-3xl shadow-2xl flex flex-col h-96 overflow-hidden">
+                {/* Chat Header */}
+                <div className="bg-forest-600 text-white p-3.5 flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <Icons.Chat />
+                    <div>
+                      <h4 className="text-xs font-bold leading-tight">AI Regulatory Copilot</h4>
+                      <p className="text-[10px] text-forest-200">APH 2026-27 Knowledge Engine</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setChatOpen(false)} className="text-white hover:text-gray-200 font-bold text-lg">×</button>
+                </div>
+
+                {/* Messages Body */}
+                <div className="flex-1 p-3 overflow-y-auto space-y-2.5 custom-scroll text-xs">
+                  {chatMessages.map((msg, i) => (
+                    <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`p-2.5 rounded-2xl max-w-[85%] whitespace-pre-line ${
+                        msg.sender === 'user' ? 'bg-forest-600 text-white rounded-br-xs' : 'bg-gray-100 text-gray-800 rounded-bl-xs'
+                      }`}>
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+                  {chatLoading && (
+                    <div className="flex justify-start">
+                      <div className="p-2.5 bg-gray-100 rounded-2xl text-[11px] text-gray-500 animate-pulse">
+                        Evaluating statutory clauses...
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Chat Input */}
+                <form onSubmit={handleSendChat} className="p-2 border-t border-gray-100 flex gap-2 bg-gray-50">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder="Ask about APH rules or missing info..."
+                    className="flex-1 px-3 py-1.5 border border-gray-300 rounded-xl text-xs focus:ring-2 focus:ring-forest-600 focus:outline-none"
+                  />
+                  <button type="submit" className="px-3 py-1.5 bg-forest-600 text-white rounded-xl text-xs font-bold hover:bg-forest-700">
+                    Send
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
+
           {/* ---------------- MODAL 1: MANAGER DECISION MODAL ---------------- */}
           {selectedApp && (
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1500,12 +2304,7 @@
                     <h3 className="text-lg font-bold text-forest-600">Officer Adjudication Workbench</h3>
                     <p className="text-xs text-gray-400">Application #{selectedApp.application_number}</p>
                   </div>
-                  <button
-                    onClick={() => setSelectedApp(null)}
-                    className="text-gray-400 hover:text-gray-600 text-xl font-bold"
-                  >
-                    ×
-                  </button>
+                  <button onClick={() => setSelectedApp(null)} className="text-gray-400 hover:text-gray-600 text-xl font-bold">×</button>
                 </div>
 
                 <div className="space-y-4 text-xs">
@@ -1576,7 +2375,7 @@
                     </div>
                     <h2 className="text-2xl font-black text-forest-600 tracking-wide uppercase">Official Certificate of Document Verification</h2>
                     <p className="text-xs text-gray-500 font-semibold tracking-wider uppercase">Republic Regulatory Verification Commission • Document Integrity Division</p>
-                    <p className="text-xs font-mono font-bold text-forest-700">Certificate No: {certificateData.certificate_id}</p>
+                    <p className="text-xs font-mono font-bold text-forest-700">Verification ID: {certificateData.verification_id}</p>
                   </div>
 
                   {/* Body Content */}
@@ -1598,6 +2397,10 @@
                         <p className="text-[10px] text-gray-400 uppercase font-bold">Cryptographic SHA-256 Digest</p>
                         <p className="font-mono text-[10px] text-gray-700 break-all">{certificateData.document.sha256_hash}</p>
                       </div>
+                      <div className="col-span-2">
+                        <p className="text-[10px] text-gray-400 uppercase font-bold">Blockchain Proof Hash (Block #{certificateData.block_height})</p>
+                        <p className="font-mono text-[10px] text-forest-800 break-all">{certificateData.blockchain_hash}</p>
+                      </div>
                     </div>
 
                     <div className="flex justify-between items-center p-3 rounded-xl border border-gray-200">
@@ -1618,8 +2421,9 @@
                       <p className="text-[10px] text-gray-400">{certificateData.issued_at}</p>
                     </div>
                     <div className="text-right">
-                      <div className="w-20 h-20 border-2 border-forest-600 rounded-xl flex items-center justify-center font-mono text-[9px] text-forest-600 p-1 bg-forest-50/50">
-                        [QR SEAL]
+                      <div className="w-20 h-20 border-2 border-forest-600 rounded-xl flex flex-col items-center justify-center font-mono text-[8px] text-forest-600 p-1 bg-forest-50/50">
+                        <span className="font-bold">[QR VALID]</span>
+                        <span className="text-[7px] text-gray-500 mt-1">SCAN TO VERIFY</span>
                       </div>
                     </div>
                   </div>
@@ -1712,24 +2516,24 @@
                     <h4 className="font-bold text-sm text-forest-800 mb-3">Key Software & Technologies Implemented</h4>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                       <div className="p-3 bg-forest-50 rounded-xl border border-forest-200">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Frontend</p>
-                        <p className="font-bold text-forest-800 text-xs mt-1">React 18 + Tailwind</p>
-                        <p className="text-[10px] text-gray-500">HTML5, CSS3, JavaScript</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase">Frontend & 3D</p>
+                        <p className="font-bold text-forest-800 text-xs mt-1">React 18 + Three.js</p>
+                        <p className="text-[10px] text-gray-500">Tailwind CSS, WebGL 3D</p>
                       </div>
                       <div className="p-3 bg-forest-50 rounded-xl border border-forest-200">
                         <p className="text-[10px] font-bold text-gray-400 uppercase">Backend</p>
                         <p className="font-bold text-forest-800 text-xs mt-1">Python Full-Stack</p>
-                        <p className="text-[10px] text-gray-500">FastAPI/Flask + Node.js Ready</p>
+                        <p className="text-[10px] text-gray-500">FastAPI/Flask + Redis Queue</p>
                       </div>
                       <div className="p-3 bg-forest-50 rounded-xl border border-forest-200">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">AI / ML & OCR</p>
-                        <p className="font-bold text-forest-800 text-xs mt-1">OpenCV + Tesseract</p>
-                        <p className="text-[10px] text-gray-500">TensorFlow, Scikit-learn</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase">AI / ML & Biometrics</p>
+                        <p className="font-bold text-forest-800 text-xs mt-1">PyTorch + OpenCV</p>
+                        <p className="text-[10px] text-gray-500">ArcFace Liveness + ELA</p>
                       </div>
                       <div className="p-3 bg-forest-50 rounded-xl border border-forest-200">
                         <p className="text-[10px] font-bold text-gray-400 uppercase">Security & DB</p>
-                        <p className="font-bold text-forest-800 text-xs mt-1">OAuth 2.0 + SQLite</p>
-                        <p className="text-[10px] text-gray-500">PostgreSQL / MySQL Ready</p>
+                        <p className="font-bold text-forest-800 text-xs mt-1">Blockchain + OAuth2</p>
+                        <p className="text-[10px] text-gray-500">PostgreSQL, DigiLocker API</p>
                       </div>
                     </div>
                   </div>
@@ -1740,7 +2544,7 @@
                     onClick={() => setShowTechModal(false)}
                     className="px-4 py-2 bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs rounded-xl"
                   >
-                    Got It
+                    Close Architecture
                   </button>
                 </div>
               </div>
