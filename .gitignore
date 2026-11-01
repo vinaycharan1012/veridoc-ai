@@ -1,0 +1,12 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.db
+.env
+.vscode/
+uploads/*
+server/uploads/*
+server/venv/
+server/__pycache__/
+client/node_modules/
