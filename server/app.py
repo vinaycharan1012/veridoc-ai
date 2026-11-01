@@ -17,7 +17,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from urllib.parse import urlparse, parse_qs
 
-PORT = 8000
+PORT = int(os.environ.get("PORT", 8000))
 SECRET_KEY = b"veridoc_forest_green_auth_key_2026"
 DB_FILE = os.path.join(os.path.dirname(__file__), "veridoc.db")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
