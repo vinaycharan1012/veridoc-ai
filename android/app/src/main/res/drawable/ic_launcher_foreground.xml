@@ -4,24 +4,73 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
     <group
-        android:scaleX="0.6"
-        android:scaleY="0.6"
-        android:translateX="21.6"
-        android:translateY="21.6">
-        <!-- Shield Contour -->
-        <path
-            android:fillColor="#143628"
-            android:strokeColor="#52b788"
-            android:strokeWidth="3"
-            android:pathData="M54,12 L88,24 C88,58 76,78 54,96 C32,78 20,58 20,24 Z" />
-        <!-- Verification Check -->
+        android:scaleX="0.68"
+        android:scaleY="0.68"
+        android:translateX="17.28"
+        android:translateY="17.28">
+
+        <!-- Outer Shield Gold Rim -->
         <path
             android:fillColor="#00000000"
-            android:strokeColor="#52b788"
+            android:strokeColor="#e9c46a"
+            android:strokeWidth="2.5"
+            android:pathData="M54,14 C70,20 80,22 88,26 C88,54 76,78 54,94 C32,78 20,54 20,26 C28,22 38,20 54,14 Z" />
+
+        <!-- 3D Left Facet (Light Source) -->
+        <path
+            android:fillColor="#2d6a4f"
+            android:pathData="M54,16 C39,22 29,24 22,27 C22,53 33,76 54,91 L54,16 Z" />
+
+        <!-- 3D Right Facet (Deep Shadow) -->
+        <path
+            android:fillColor="#143628"
+            android:pathData="M54,16 C69,22 79,24 86,27 C86,53 75,76 54,91 L54,16 Z" />
+
+        <!-- Center Bevel Spine Line -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#74c69d"
+            android:strokeWidth="1.2"
+            android:pathData="M54,16 L54,91" />
+
+        <!-- Embedded Deep "V" Silhouette -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#0b2318"
             android:strokeWidth="6"
             android:strokeLineCap="round"
             android:strokeLineJoin="round"
-            android:pathData="M38,52 L48,64 L70,40" />
+            android:pathData="M34,34 L54,74 L74,34" />
+
+        <!-- Radiant Neon Verification Checkmark -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#52b788"
+            android:strokeWidth="7"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M38,53 L50,65 L72,39" />
+
+        <!-- Specular Highlight Line on Checkmark -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#ffffff"
+            android:strokeWidth="2.2"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M38,53 L50,65 L72,39" />
+
+        <!-- Sovereign Gold Star Crest -->
+        <path
+            android:fillColor="#f4a261"
+            android:pathData="M54,9 L55.5,12 L59,12.2 L56.2,14.2 L57,17.5 L54,15.7 L51,17.5 L51.8,14.2 L49,12.2 L52.5,12 Z" />
+
+        <!-- Perimeter Satellite Precision Dots -->
+        <path
+            android:fillColor="#74c69d"
+            android:pathData="M54,23 a1.5,1.5 0 1,0 0.01,0 Z M76,33 a1.2,1.2 0 1,0 0.01,0 Z M81,54 a1.2,1.2 0 1,0 0.01,0 Z M71,75 a1.2,1.2 0 1,0 0.01,0 Z M37,75 a1.2,1.2 0 1,0 0.01,0 Z M27,54 a1.2,1.2 0 1,0 0.01,0 Z M32,33 a1.2,1.2 0 1,0 0.01,0 Z" />
+
     </group>
 </vector>

@@ -6,3 +6,4 @@
     <string name="offline_message">Unable to connect to the secure VERIDOC regulatory network. Please check your cellular data or Wi-Fi connection.</string>
     <string name="retry_button">Retry Connection</string>
 </resources>
+
