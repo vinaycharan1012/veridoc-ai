@@ -10,3 +10,9 @@ server/uploads/*
 server/venv/
 server/__pycache__/
 client/node_modules/
+.gradle/
+android/.gradle/
+android/build/
+android/app/build/
+*.aab
+*.apk

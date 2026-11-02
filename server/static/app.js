@@ -499,6 +499,30 @@ function App() {
 
   // Reset Demo Notification
   const [resetMsg, setResetMsg] = useState('');
+  const [isDailyRefreshing, setIsDailyRefreshing] = useState(false);
+  const [dailyRefreshMsg, setDailyRefreshMsg] = useState('');
+
+  const handleDailyRefresh = async () => {
+    setIsDailyRefreshing(true);
+    setDailyRefreshMsg('');
+    try {
+      const res = await fetch('/api/applications/daily-refresh', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.applications) setApplications(data.applications);
+        setDailyRefreshMsg(`Daily refresh complete: ${data.applications ? data.applications.length : 8} institutional applications synchronized!`);
+        setTimeout(() => setDailyRefreshMsg(''), 5000);
+      }
+      loadData();
+    } catch (err) {
+      console.error('Daily refresh error:', err);
+    } finally {
+      setIsDailyRefreshing(false);
+    }
+  };
 
   // Load User and App Data
   const loadData = async () => {
@@ -531,7 +555,13 @@ function App() {
     }
   };
   useEffect(() => {
-    if (token) loadData();
+    if (token) {
+      loadData();
+      const pollTimer = setInterval(() => {
+        loadData();
+      }, 15000);
+      return () => clearInterval(pollTimer);
+    }
   }, [token, activeTab]);
 
   // Authentication Handler
@@ -1108,6 +1138,13 @@ function App() {
   }, selectedPersona.name), " (", selectedPersona.role, ").")), /*#__PURE__*/React.createElement("div", {
     className: "flex flex-wrap items-center gap-2 self-end lg:self-auto"
   }, /*#__PURE__*/React.createElement("button", {
+    onClick: handleDailyRefresh,
+    disabled: isDailyRefreshing,
+    className: "px-3 py-1.5 bg-forest-600 hover:bg-forest-700 text-white text-xs font-bold rounded-xl flex items-center space-x-1.5 transition shadow-sm border border-forest-500",
+    title: "Daily sync and fast refresh of institutional applications"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: isDailyRefreshing ? "inline-block animate-spin" : "inline-block"
+  }, "🔄"), /*#__PURE__*/React.createElement("span", null, isDailyRefreshing ? "Syncing..." : "Daily Refresh • दैनिक रिफ्रेश")), /*#__PURE__*/React.createElement("button", {
     onClick: handleResetDemo,
     className: "px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition border border-gray-300 shadow-sm",
     title: "Restore demo applications and documents to baseline"
@@ -1418,35 +1455,49 @@ function App() {
   }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
     className: "border-b border-gray-100 text-gray-400 uppercase"
   }, /*#__PURE__*/React.createElement("th", {
-    className: "py-3 px-4"
+    className: "py-3 px-3"
   }, "Application Number"), /*#__PURE__*/React.createElement("th", {
-    className: "py-3 px-4"
-  }, "Applicant / Institution"), /*#__PURE__*/React.createElement("th", {
-    className: "py-3 px-4"
+    className: "py-3 px-3"
+  }, "Institution & Applicant"), /*#__PURE__*/React.createElement("th", {
+    className: "py-3 px-3"
+  }, "Uploaded By / Officer"), /*#__PURE__*/React.createElement("th", {
+    className: "py-3 px-3"
   }, "Classification"), /*#__PURE__*/React.createElement("th", {
-    className: "py-3 px-4"
-  }, "Verification Status"), /*#__PURE__*/React.createElement("th", {
-    className: "py-3 px-4"
-  }, "Submission Date"), /*#__PURE__*/React.createElement("th", {
-    className: "py-3 px-4 text-right"
+    className: "py-3 px-3"
+  }, "AI Risk Score"), /*#__PURE__*/React.createElement("th", {
+    className: "py-3 px-3"
+  }, "Status"), /*#__PURE__*/React.createElement("th", {
+    className: "py-3 px-3"
+  }, "Last Refresh"), /*#__PURE__*/React.createElement("th", {
+    className: "py-3 px-3 text-right"
   }, "Actions"))), /*#__PURE__*/React.createElement("tbody", {
     className: "divide-y divide-gray-50"
   }, filteredApplications.map(app => /*#__PURE__*/React.createElement("tr", {
     key: app.id,
     className: "hover:bg-gray-50 transition"
   }, /*#__PURE__*/React.createElement("td", {
-    className: "py-3 px-4 font-mono font-bold text-forest-600"
+    className: "py-3 px-3 font-mono font-bold text-forest-600 whitespace-nowrap"
   }, app.application_number), /*#__PURE__*/React.createElement("td", {
-    className: "py-3 px-4 font-semibold text-gray-900"
+    className: "py-3 px-3 font-semibold text-gray-900"
   }, app.applicant_name), /*#__PURE__*/React.createElement("td", {
-    className: "py-3 px-4 text-gray-600"
+    className: "py-3 px-3 text-gray-700"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "font-medium text-xs text-forest-700"
+  }, app.uploader_name || "Sunita Venkatesh (Officer)"), /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] text-gray-400"
+  }, app.uploader_org || "National Reviewer")), /*#__PURE__*/React.createElement("td", {
+    className: "py-3 px-3 text-gray-600 whitespace-nowrap"
   }, app.dossier_type), /*#__PURE__*/React.createElement("td", {
-    className: "py-3 px-4"
+    className: "py-3 px-3 whitespace-nowrap"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `px-2 py-0.5 rounded-full font-mono font-bold text-[10px] ${app.risk_score > 60 ? 'bg-red-100 text-red-800 border border-red-200' : app.risk_score > 30 ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}`
+  }, app.risk_score ? `${app.risk_score}% Risk` : "N/A")), /*#__PURE__*/React.createElement("td", {
+    className: "py-3 px-3 whitespace-nowrap"
   }, /*#__PURE__*/React.createElement("span", {
     className: `px-2.5 py-1 rounded-full font-bold text-[11px] ${app.status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-800' : app.status === 'REJECTED' || app.status === 'NEEDS_CORRECTION' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'}`
   }, app.status)), /*#__PURE__*/React.createElement("td", {
-    className: "py-3 px-4 text-gray-400"
-  }, new Date(app.created_at).toLocaleDateString()), /*#__PURE__*/React.createElement("td", {
+    className: "py-3 px-3 text-gray-500 whitespace-nowrap font-mono text-[11px]"
+  }, app.updated_at || app.created_at || "Today"), /*#__PURE__*/React.createElement("td", {
     className: "py-3 px-4 text-right"
   }, userMode === 'manager' ? /*#__PURE__*/React.createElement("button", {
     onClick: () => {

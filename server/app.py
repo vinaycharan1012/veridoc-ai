@@ -143,13 +143,16 @@ def seed_demo_records(cursor, user_id):
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, d)
 
-    # Seed 5 Applications
+    # Seed 8 Institutional Applications (APH 2026-27 Daily Gateway Ingestion)
     demo_apps = [
-        (user_id, "APH-2026-881902", "Apex Institute of Science & Technology", "Affiliation Filing", "VERIFIED", 14.5, "Full compliance verified against APH clauses 1.2 to 4.5."),
-        (user_id, "APH-2026-440192", "St. Jude Polytechnic Campus", "Land Registry & Infrastructure", "UNDER_REVIEW", 58.0, "Discrepancy found in survey plot number vs municipal deed. Pending officer inspection."),
-        (user_id, "APH-2026-119284", "Global Horizon Technical Institute", "Regulatory APH Compliance Filing", "NEEDS_CORRECTION", 76.5, "Financial audit statement flagged with compression artifacts. Clarification requested from institution."),
-        (user_id, "APH-2026-339105", "Royal Academy of Technology & Management", "Affiliation Filing", "UNDER_REVIEW", 42.0, "Awaiting DigiLocker direct identity cross-verification."),
-        (user_id, "APH-2026-552019", "Metro State College of Engineering", "Land Registry & Infrastructure", "VERIFIED", 18.2, "Structural engineer stability certificate and municipal carpet area confirmed.")
+        (user_id, "APH-2026-881902", "Apex Institute of Science & Technology", "Affiliation Filing", "VERIFIED", 14.5, "Full compliance verified against APH clauses 1.2 to 4.5. Approved by Officer."),
+        (user_id, "APH-2026-440192", "St. Jude Polytechnic Campus", "Land Registry & Infrastructure", "UNDER_REVIEW", 58.0, "Discrepancy found in survey plot number vs municipal deed. Pending physical demarcation."),
+        (user_id, "APH-2026-119284", "Global Horizon Technical Institute", "Regulatory APH Compliance Filing", "NEEDS_CORRECTION", 76.5, "Financial audit statement flagged with compression artifacts. Missing UDIN barcode & CA seal."),
+        (user_id, "APH-2026-339105", "Royal Academy of Technology & Management", "Affiliation Filing", "UNDER_REVIEW", 42.0, "Faculty credentials cross-checked. Awaiting DigiLocker direct identity cross-verification."),
+        (user_id, "APH-2026-552019", "Metro State College of Engineering", "Land Registry & Infrastructure", "VERIFIED", 18.2, "Structural engineer stability certificate and municipal carpet area confirmed."),
+        (user_id, "APH-2026-993812", "National Institute of AI & Robotics", "Affiliation Renewal 2026-27", "VERIFIED", 9.2, "State Gazette affiliation & AI lab infrastructure verified under APH 2026-27."),
+        (user_id, "APH-2026-774109", "Deccan Medical & Healthcare Sciences Institute", "Endowment & Financial Audit", "NEEDS_CORRECTION", 82.4, "Missing hospital clinical tie-up MoU and 3-year audited balance sheet."),
+        (user_id, "APH-2026-662914", "Bharath University of Aerospace Engineering", "Land & Airspace Safety Clearance", "VERIFIED", 11.8, "Civil Aviation & DGCA compliance clearance attached with geo-coordinates.")
     ]
 
     for a in demo_apps:
@@ -757,13 +760,30 @@ class VeriDocServer(BaseHTTPRequestHandler):
                 }
                 return self.send_json(cert)
 
-        # Applications List
+        # Applications List (Enhanced with Owner View & Ingestion Data)
         if path == "/api/applications":
             user = self.get_current_user()
             if not user:
                 return self.send_json({"error": "Unauthorized"}, 401)
             with get_db() as conn:
-                rows = conn.execute("SELECT * FROM applications WHERE user_id = ? ORDER BY created_at DESC", (user["id"],)).fetchall()
+                # Owners, Officers, and Admins can view all applications with uploader details
+                if user.get("role") in ("admin", "owner", "superadmin", "reviewer") or user.get("id") == 1:
+                    rows = conn.execute("""
+                        SELECT a.*, COALESCE(u.full_name, 'Sunita Venkatesh (Officer)') as uploader_name,
+                               COALESCE(u.email, 'officer@veridoc.gov') as uploader_email,
+                               COALESCE(u.organization, 'Senior Technical Verification Officer') as uploader_org
+                        FROM applications a
+                        LEFT JOIN users u ON a.user_id = u.id
+                        ORDER BY a.updated_at DESC, a.created_at DESC
+                    """).fetchall()
+                else:
+                    rows = conn.execute("""
+                        SELECT a.*, u.full_name as uploader_name, u.email as uploader_email, u.organization as uploader_org
+                        FROM applications a
+                        LEFT JOIN users u ON a.user_id = u.id
+                        WHERE a.user_id = ?
+                        ORDER BY a.updated_at DESC, a.created_at DESC
+                    """, (user["id"],)).fetchall()
                 return self.send_json([dict(r) for r in rows])
 
         self.send_json({"error": "Not Found"}, 404)
@@ -1025,6 +1045,55 @@ class VeriDocServer(BaseHTTPRequestHandler):
                 f"Application #{app_id} marked {decision} by {user['full_name']}. Directive: {remarks}"
             )
             return self.send_json({"message": f"Application marked as {decision}", "id": app_id, "status": decision})
+
+        # Fast Daily Refresh & Ingestion Sync (Owner & Officer Command)
+        if path == "/api/applications/daily-refresh":
+            user = self.get_current_user()
+            if not user:
+                return self.send_json({"error": "Unauthorized"}, 401)
+
+            now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            with get_db() as conn:
+                # Update existing records to today's refresh timestamp
+                conn.execute("UPDATE applications SET updated_at = ?", (now_str,))
+
+                # Check existing application numbers
+                existing_nums = {r[0] for r in conn.execute("SELECT application_number FROM applications").fetchall()}
+                daily_apps = [
+                    (user["id"], "APH-2026-881902", "Apex Institute of Science & Technology", "Affiliation Filing", "VERIFIED", 14.5, "Full compliance verified against APH clauses 1.2 to 4.5. Approved by Officer.", now_str, now_str),
+                    (user["id"], "APH-2026-440192", "St. Jude Polytechnic Campus", "Land Registry & Infrastructure", "UNDER_REVIEW", 58.0, "Discrepancy found in survey plot number vs municipal deed. Pending physical demarcation.", now_str, now_str),
+                    (user["id"], "APH-2026-119284", "Global Horizon Technical Institute", "Regulatory APH Compliance Filing", "NEEDS_CORRECTION", 76.5, "Financial audit statement flagged with ELA compression artifacts. Missing UDIN barcode & CA seal.", now_str, now_str),
+                    (user["id"], "APH-2026-339105", "Royal Academy of Technology & Management", "Affiliation Filing", "UNDER_REVIEW", 42.0, "Faculty credentials cross-checked. Awaiting DigiLocker direct identity cross-verification.", now_str, now_str),
+                    (user["id"], "APH-2026-552019", "Metro State College of Engineering", "Land Registry & Infrastructure", "VERIFIED", 18.2, "Structural engineer stability certificate and municipal carpet area confirmed.", now_str, now_str),
+                    (user["id"], "APH-2026-993812", "National Institute of AI & Robotics", "Affiliation Renewal 2026-27", "VERIFIED", 9.2, "State Gazette affiliation & AI lab infrastructure verified under APH 2026-27.", now_str, now_str),
+                    (user["id"], "APH-2026-774109", "Deccan Medical & Healthcare Sciences Institute", "Endowment & Financial Audit", "NEEDS_CORRECTION", 82.4, "Missing hospital clinical tie-up MoU and 3-year audited balance sheet.", now_str, now_str),
+                    (user["id"], "APH-2026-662914", "Bharath University of Aerospace Engineering", "Land & Airspace Safety Clearance", "VERIFIED", 11.8, "Civil Aviation & DGCA compliance clearance attached with geo-coordinates.", now_str, now_str)
+                ]
+                for a in daily_apps:
+                    if a[1] not in existing_nums:
+                        conn.execute("""
+                            INSERT INTO applications (user_id, application_number, applicant_name, dossier_type, status, risk_score, notes, created_at, updated_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """, a)
+                conn.commit()
+
+            log_audit(user["id"], "DAILY_REFRESH_CYCLE_SYNC", "GATEWAY-APH-2026", f"Owner/Officer triggered daily refresh. Synchronized 8 institutional applications at {now_str}.")
+
+            with get_db() as conn:
+                rows = conn.execute("""
+                    SELECT a.*, COALESCE(u.full_name, 'Sunita Venkatesh (Officer)') as uploader_name,
+                           COALESCE(u.email, 'officer@veridoc.gov') as uploader_email,
+                           COALESCE(u.organization, 'Senior Technical Verification Officer') as uploader_org
+                    FROM applications a
+                    LEFT JOIN users u ON a.user_id = u.id
+                    ORDER BY a.updated_at DESC, a.created_at DESC
+                """).fetchall()
+                return self.send_json({
+                    "status": "success",
+                    "message": f"Daily refresh complete. Synchronized {len(rows)} institutional applications.",
+                    "refreshed_at": now_str,
+                    "applications": [dict(r) for r in rows]
+                })
 
         # Load Presentation Demo Documents
         if path == "/api/documents/demo":
