@@ -354,18 +354,31 @@ function ThreeDHologramShield() {
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
     let animationFrameId;
+    let targetRotX = 0, targetRotY = 0;
+    const onPointerMove = (e) => {
+      const rect = container.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+      const clientY = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
+      targetRotX = ((clientY - rect.top) / height - 0.5) * 1.2;
+      targetRotY = ((clientX - rect.left) / width - 0.5) * 1.5;
+    };
+    container.addEventListener('pointermove', onPointerMove);
+    container.addEventListener('touchmove', onPointerMove, { passive: true });
+
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      sphere.rotation.x += 0.005;
-      sphere.rotation.y += 0.01;
+      sphere.rotation.x += (targetRotX - sphere.rotation.x) * 0.05 + 0.004;
+      sphere.rotation.y += (targetRotY - sphere.rotation.y) * 0.05 + 0.008;
       innerMesh.rotation.x -= 0.01;
-      innerMesh.rotation.y -= 0.008;
+      innerMesh.rotation.y -= 0.007;
       particles.rotation.y += 0.002;
       renderer.render(scene, camera);
     };
     animate();
     return () => {
       cancelAnimationFrame(animationFrameId);
+      container.removeEventListener('pointermove', onPointerMove);
+      container.removeEventListener('touchmove', onPointerMove);
       if (container && renderer.domElement) {
         container.innerHTML = '';
       }
@@ -1449,7 +1462,7 @@ function App() {
   }, "Needs Correction"), /*#__PURE__*/React.createElement("option", {
     value: "REJECTED"
   }, "Rejected")))), /*#__PURE__*/React.createElement("div", {
-    className: "border border-gray-200 rounded-2xl p-6 shadow-sm bg-white overflow-x-auto"
+    className: "border border-gray-200 rounded-2xl p-6 shadow-sm bg-white overflow-x-auto card-hover"
   }, /*#__PURE__*/React.createElement("table", {
     className: "w-full text-left border-collapse text-xs"
   }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
@@ -1532,7 +1545,7 @@ function App() {
     onClick: () => setShowStartVaultModal(true),
     className: "px-4 py-2 bg-forest-600 text-white text-xs font-bold rounded-xl shadow-sm hover:bg-forest-700 flex items-center space-x-1.5"
   }, /*#__PURE__*/React.createElement(Icons.Upload, null), /*#__PURE__*/React.createElement("span", null, "Start Archive Ingestion")))), /*#__PURE__*/React.createElement("div", {
-    className: "border border-gray-200 rounded-2xl p-6 shadow-sm bg-white overflow-x-auto"
+    className: "border border-gray-200 rounded-2xl p-6 shadow-sm bg-white overflow-x-auto card-hover"
   }, /*#__PURE__*/React.createElement("table", {
     className: "w-full text-left border-collapse text-xs"
   }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {

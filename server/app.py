@@ -31,8 +31,14 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 # DATABASE INITIALIZATION
 # ----------------------------------------------------
 def get_db():
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("PRAGMA journal_mode = WAL")
+        conn.execute("PRAGMA synchronous = NORMAL")
+        conn.execute("PRAGMA busy_timeout = 30000")
+    except Exception:
+        pass
     return conn
 
 def seed_demo_records(cursor, user_id):
@@ -586,6 +592,15 @@ class VeriDocServer(BaseHTTPRequestHandler):
                 self.send_response(404)
                 self.end_headers()
                 return
+
+        # Health & Keep-Alive Ping
+        if path in ("/api/health", "/api/ping"):
+            return self.send_json({
+                "status": "UP",
+                "service": "VERIDOC Regulatory Verification Platform",
+                "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC"),
+                "version": "1.0.0"
+            })
 
         # Current User Profile
         if path == "/api/auth/me":
