@@ -478,6 +478,73 @@ class VeriDocServer(BaseHTTPRequestHandler):
                 self.end_headers()
                 return
 
+        if path in ("/app.js", "/static/app.js"):
+            file_path = os.path.join(STATIC_DIR, "app.js")
+            if os.path.exists(file_path):
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/javascript; charset=utf-8")
+                self.send_header("Content-Length", str(len(content)))
+                self.send_header("Cache-Control", "public, max-age=3600")
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            else:
+                self.send_response(404)
+                self.end_headers()
+                return
+
+        if path.startswith("/static/"):
+            rel_name = path[len("/static/"):].replace("..", "").lstrip("/\\")
+            file_path = os.path.join(STATIC_DIR, rel_name)
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                content_type = "application/octet-stream"
+                if rel_name.endswith(".js"):
+                    content_type = "application/javascript; charset=utf-8"
+                elif rel_name.endswith(".css"):
+                    content_type = "text/css; charset=utf-8"
+                elif rel_name.endswith(".html"):
+                    content_type = "text/html; charset=utf-8"
+                elif rel_name.endswith(".png"):
+                    content_type = "image/png"
+                elif rel_name.endswith(".jpg") or rel_name.endswith(".jpeg"):
+                    content_type = "image/jpeg"
+                elif rel_name.endswith(".svg"):
+                    content_type = "image/svg+xml"
+                elif rel_name.endswith(".json"):
+                    content_type = "application/json"
+
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", content_type)
+                self.send_header("Content-Length", str(len(content)))
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            else:
+                self.send_response(404)
+                self.end_headers()
+                return
+
+        if path.startswith("/uploads/"):
+            rel_name = path[len("/uploads/"):].replace("..", "").lstrip("/\\")
+            file_path = os.path.join(UPLOADS_DIR, rel_name)
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/octet-stream")
+                self.send_header("Content-Length", str(len(content)))
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            else:
+                self.send_response(404)
+                self.end_headers()
+                return
+
         # Current User Profile
         if path == "/api/auth/me":
             user = self.get_current_user()
