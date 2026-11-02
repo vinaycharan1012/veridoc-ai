@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="forest_primary">#1b4332</color>
+    <color name="forest_dark">#081c15</color>
+    <color name="forest_medium">#2d6a4f</color>
+    <color name="emerald_accent">#52b788</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray_bg">#F9FAFB</color>
+    <color name="text_dark">#111827</color>
+    <color name="text_muted">#6B7280</color>
+</resources>

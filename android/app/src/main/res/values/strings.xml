@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">VERIDOC</string>
+    <string name="app_full_name">VERIDOC • वेरीडॉक</string>
+    <string name="app_subtitle">Regulatory Verification &amp; Audit Operations Platform</string>
+    <string name="offline_title">Connection Lost</string>
+    <string name="offline_message">Unable to connect to the secure VERIDOC regulatory network. Please check your cellular data or Wi-Fi connection.</string>
+    <string name="retry_button">Retry Connection</string>
+</resources>

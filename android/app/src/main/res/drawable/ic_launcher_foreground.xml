@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:translateX="21.6"
+        android:translateY="21.6">
+        <!-- Shield Contour -->
+        <path
+            android:fillColor="#143628"
+            android:strokeColor="#52b788"
+            android:strokeWidth="3"
+            android:pathData="M54,12 L88,24 C88,58 76,78 54,96 C32,78 20,58 20,24 Z" />
+        <!-- Verification Check -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#52b788"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M38,52 L48,64 L70,40" />
+    </group>
+</vector>

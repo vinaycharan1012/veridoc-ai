@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "gov.veridoc.app",
+      "sha256_cert_fingerprints": [
+        "14:6D:E9:EB:BF:E5:EA:85:E0:85:F1:61:95:97:2F:32:04:49:04:A8:18:48:B4:83:A1:EB:75:A0:D4:57:4C:E6"
+      ]
+    }
+  }
+]

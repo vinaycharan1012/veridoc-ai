@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b4332" />
+      <stop offset="50%" stop-color="#2d6a4f" />
+      <stop offset="100%" stop-color="#081c15" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#52b788" />
+      <stop offset="100%" stop-color="#40916c" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Background Rounded Shield Container -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- Outer Cryptographic Hexagon Shield -->
+  <path d="M 256 70 L 410 130 L 410 270 C 410 365 340 435 256 455 C 172 435 102 365 102 270 L 102 130 Z" 
+        fill="none" stroke="url(#goldGrad)" stroke-width="12" stroke-linejoin="round" opacity="0.85" />
+
+  <!-- Inner Protective Shield -->
+  <path d="M 256 94 L 386 146 L 386 264 C 386 345 328 406 256 424 C 184 406 126 345 126 264 L 126 146 Z" 
+        fill="#143628" opacity="0.9" filter="url(#shadow)" />
+
+  <!-- Central Verification Checkmark -->
+  <path d="M 195 260 L 238 304 L 325 212" 
+        fill="none" stroke="#52b788" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Ashoka Chakra Mini Nodes (12 Orbital Security Points) -->
+  <circle cx="256" cy="120" r="6" fill="#74c69d" />
+  <circle cx="320" cy="140" r="5" fill="#74c69d" />
+  <circle cx="365" cy="190" r="5" fill="#74c69d" />
+  <circle cx="375" cy="256" r="6" fill="#74c69d" />
+  <circle cx="355" cy="320" r="5" fill="#74c69d" />
+  <circle cx="310" cy="370" r="5" fill="#74c69d" />
+  <circle cx="256" cy="395" r="6" fill="#74c69d" />
+  <circle cx="202" cy="370" r="5" fill="#74c69d" />
+  <circle cx="157" cy="320" r="5" fill="#74c69d" />
+  <circle cx="137" cy="256" r="6" fill="#74c69d" />
+  <circle cx="147" cy="190" r="5" fill="#74c69d" />
+  <circle cx="192" cy="140" r="5" fill="#74c69d" />
+</svg>

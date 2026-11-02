@@ -461,7 +461,7 @@ class VeriDocServer(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
 
-        # Static Assets
+        # Static Assets & PWA Endpoints
         if path == "/" or path == "/index.html":
             file_path = os.path.join(STATIC_DIR, "index.html")
             if os.path.exists(file_path):
@@ -476,6 +476,45 @@ class VeriDocServer(BaseHTTPRequestHandler):
             else:
                 self.send_response(404)
                 self.end_headers()
+                return
+
+        if path == "/manifest.json":
+            file_path = os.path.join(STATIC_DIR, "manifest.json")
+            if os.path.exists(file_path):
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/manifest+json; charset=utf-8")
+                self.send_header("Content-Length", str(len(content)))
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(content)
+                return
+
+        if path == "/sw.js":
+            file_path = os.path.join(STATIC_DIR, "sw.js")
+            if os.path.exists(file_path):
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/javascript; charset=utf-8")
+                self.send_header("Content-Length", str(len(content)))
+                self.send_header("Service-Worker-Allowed", "/")
+                self.end_headers()
+                self.wfile.write(content)
+                return
+
+        if path == "/.well-known/assetlinks.json":
+            file_path = os.path.join(STATIC_DIR, ".well-known", "assetlinks.json")
+            if os.path.exists(file_path):
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(content)))
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(content)
                 return
 
         if path in ("/app.js", "/static/app.js"):

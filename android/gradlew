@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# Copyright 2015 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+#
+DIRNAME="$(cd "$(dirname "$0")" && pwd)"
+APP_BASE_NAME="$(basename "$0")"
+APP_HOME="$DIRNAME"
+
+# Attempt to set APP_HOME
+if [ -n "$JAVA_HOME" ] ; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD="java"
+fi
+
+CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
+exec "$JAVACMD" -Dorg.gradle.appname="$APP_BASE_NAME" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
