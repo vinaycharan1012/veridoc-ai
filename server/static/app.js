@@ -395,9 +395,37 @@ function ThreeDHologramShield() {
     className: "text-[9px] font-mono font-bold tracking-widest uppercase bg-forest-100 text-forest-800 px-2 py-0.5 rounded-full"
   }, "3D Quantum Shield Active")));
 }
+
+// Global API Base URL (auto-routes for local APK, PWA, or Web)
+const API_BASE = (typeof window !== 'undefined' && window.location && window.location.protocol === 'file:')
+  ? 'https://veridoc-ai-1-np0b.onrender.com'
+  : '';
+
+// Instant Pre-Populated Datasets for Zero-Wait Instant Startup (<1s)
+const INITIAL_APPLICATIONS = [{"id": 6, "user_id": 1, "application_number": "APH-2026-881902", "applicant_name": "Apex Institute of Science & Technology", "dossier_type": "Affiliation Filing", "status": "VERIFIED", "risk_score": 14.5, "notes": "Full compliance verified against APH clauses 1.2 to 4.5. Approved by Officer.", "created_at": "2026-11-02 21:25:06", "updated_at": "2026-11-02 21:51:50", "uploader_name": "Sunita Venkatesh", "uploader_email": "officer@veridoc.gov", "uploader_org": "Senior Technical Verification Officer"}, {"id": 7, "user_id": 1, "application_number": "APH-2026-440192", "applicant_name": "St. Jude Polytechnic Campus", "dossier_type": "Land Registry & Infrastructure", "status": "UNDER_REVIEW", "risk_score": 58.0, "notes": "Discrepancy found in survey plot number vs municipal deed. Pending physical demarcation.", "created_at": "2026-11-02 21:25:06", "updated_at": "2026-11-02 21:51:50", "uploader_name": "Sunita Venkatesh", "uploader_email": "officer@veridoc.gov", "uploader_org": "Senior Technical Verification Officer"}, {"id": 8, "user_id": 1, "application_number": "APH-2026-119284", "applicant_name": "Global Horizon Technical Institute", "dossier_type": "Regulatory APH Compliance Filing", "status": "NEEDS_CORRECTION", "risk_score": 76.5, "notes": "Financial audit statement flagged with ELA compression artifacts. Missing UDIN barcode & CA seal.", "created_at": "2026-11-02 21:25:06", "updated_at": "2026-11-02 21:51:50", "uploader_name": "Sunita Venkatesh", "uploader_email": "officer@veridoc.gov", "uploader_org": "Senior Technical Verification Officer"}, {"id": 9, "user_id": 1, "application_number": "APH-2026-339105", "applicant_name": "Royal Academy of Technology & Management", "dossier_type": "Affiliation Filing", "status": "UNDER_REVIEW", "risk_score": 42.0, "notes": "Faculty credentials cross-checked. Awaiting DigiLocker direct identity cross-verification.", "created_at": "2026-11-02 21:25:06", "updated_at": "2026-11-02 21:51:50", "uploader_name": "Sunita Venkatesh", "uploader_email": "officer@veridoc.gov", "uploader_org": "Senior Technical Verification Officer"}, {"id": 10, "user_id": 1, "application_number": "APH-2026-552019", "applicant_name": "Metro State College of Engineering", "dossier_type": "Land Registry & Infrastructure", "status": "VERIFIED", "risk_score": 18.2, "notes": "Structural engineer stability certificate and municipal carpet area confirmed.", "created_at": "2026-11-02 21:25:06", "updated_at": "2026-11-02 21:51:50", "uploader_name": "Sunita Venkatesh", "uploader_email": "officer@veridoc.gov", "uploader_org": "Senior Technical Verification Officer"}, {"id": 11, "user_id": 1, "application_number": "APH-2026-993812", "applicant_name": "National Institute of AI & Robotics", "dossier_type": "Affiliation Renewal 2026-27", "status": "VERIFIED", "risk_score": 9.2, "notes": "State Gazette affiliation & AI lab infrastructure verified under APH 2026-27.", "created_at": "2026-11-02 21:25:06", "updated_at": "2026-11-02 21:51:50", "uploader_name": "Sunita Venkatesh", "uploader_email": "officer@veridoc.gov", "uploader_org": "Senior Technical Verification Officer"}, {"id": 12, "user_id": 1, "application_number": "APH-2026-774109", "applicant_name": "Deccan Medical & Healthcare Sciences Institute", "dossier_type": "Endowment & Financial Audit", "status": "NEEDS_CORRECTION", "risk_score": 82.4, "notes": "Missing hospital clinical tie-up MoU and 3-year audited balance sheet.", "created_at": "2026-11-02 21:25:06", "updated_at": "2026-11-02 21:51:50", "uploader_name": "Sunita Venkatesh", "uploader_email": "officer@veridoc.gov", "uploader_org": "Senior Technical Verification Officer"}, {"id": 13, "user_id": 1, "application_number": "APH-2026-662914", "applicant_name": "Bharath University of Aerospace Engineering", "dossier_type": "Land & Airspace Safety Clearance", "status": "VERIFIED", "risk_score": 11.8, "notes": "Civil Aviation & DGCA compliance clearance attached with geo-coordinates.", "created_at": "2026-11-02 21:25:06", "updated_at": "2026-11-02 21:51:50", "uploader_name": "Sunita Venkatesh", "uploader_email": "officer@veridoc.gov", "uploader_org": "Senior Technical Verification Officer"}];
+const INITIAL_DOCUMENTS = [{"id": 1, "user_id": 1, "filename": "doc_aph_approved.pdf", "original_name": "APH_Compliance_Deed_2026.pdf", "file_size_kb": 482.4, "category": "Regulatory Compliance Certificate (APH)", "sha256_hash": "4f53cda828943f9a76bc0294821a0f8b1932456e729a73bb291a0c8491823ab1", "verdict": "REAL", "authenticity_score": 98.5, "risk_level": "LOW", "ocr_extracted_text": "GOVERNMENT CERTIFIED REGULATORY APPROVAL\\nRegistration ID: APH-99210-C\\nClause 4.2 Approved: Facility and Infrastructure meet full environmental standards.", "ela_tamper_score": 8.2, "fraud_flags": [], "forensic_details": {"metadata_integrity": "PASSED", "compression_homogeneity": "UNIFORM", "signature_stamp": "VALID"}, "created_at": "2026-11-02 21:25:06"}, {"id": 2, "user_id": 1, "filename": "doc_spliced_invoice.pdf", "original_name": "Vendor_Tax_Invoice_Altered.jpg", "file_size_kb": 310.8, "category": "Financial Audit Statement", "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "verdict": "FAKE", "authenticity_score": 34.0, "risk_level": "HIGH", "ocr_extracted_text": "TAX INVOICE #88910\\nAmount: $450,000.00 [Tamper detected: font mismatch on numeric characters]\\nIssued by: Apex Infrastructure Solutions", "ela_tamper_score": 68.4, "fraud_flags": [{"rule": "METADATA_MANIPULATION", "severity": "HIGH", "clause": "APH Regulation 4.2", "detail": "Image editing software traces found in EXIF header (Adobe Photoshop 2025).", "box": {"top": 68, "left": 15, "width": 68, "height": 14, "label": "Manipulated Seal"}}, {"rule": "COMPRESSION_ANOMALY", "severity": "HIGH", "clause": "APH Inspection Clause 1.8", "detail": "Inconsistent JPEG quantisation blocks detected across text bounds.", "box": {"top": 42, "left": 25, "width": 50, "height": 12, "label": "Spliced Amount Block"}}], "forensic_details": {"metadata_integrity": "FAILED", "compression_homogeneity": "ANOMALOUS", "signature_stamp": "FORGED_ARTIFACT"}, "created_at": "2026-11-02 21:25:06"}, {"id": 3, "user_id": 1, "filename": "doc_boundary_survey.pdf", "original_name": "Cadastral_Survey_Deed.pdf", "file_size_kb": 512.1, "category": "Land Registry & Infrastructure Deed", "sha256_hash": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b", "verdict": "SUSPICIOUS", "authenticity_score": 62.0, "risk_level": "MEDIUM", "ocr_extracted_text": "CADASTRAL SURVEY REGISTRATION - PLOT #412\\nArea: 14.5 Hectares\\nDiscrepancy: Coordinate marker 412B shows recompression artifact.", "ela_tamper_score": 46.8, "fraud_flags": [{"rule": "BORDER_NOISE", "severity": "MEDIUM", "clause": "APH Clause 4.1.2 - Land Deed Boundary", "detail": "Border noise indicates re-scanned or modified boundary line markers.", "box": {"top": 35, "left": 20, "width": 60, "height": 15, "label": "Survey Coordinates Line"}}], "forensic_details": {"metadata_integrity": "PASSED", "compression_homogeneity": "ANOMALOUS", "signature_stamp": "REQUIRES_MANUAL_REVIEW"}, "created_at": "2026-11-02 21:25:06"}, {"id": 4, "user_id": 1, "filename": "doc_faculty_roster.pdf", "original_name": "Faculty_Credentials_Accreditation.pdf", "file_size_kb": 278.3, "category": "Accreditation & Faculty Credentials", "sha256_hash": "5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d", "verdict": "FAKE", "authenticity_score": 41.2, "risk_level": "HIGH", "ocr_extracted_text": "FACULTY ACCREDITATION ROSTER AY 2026-27\\nPh.D. Certificates flagged: 2 duplicate registration numbers detected in National Database.", "ela_tamper_score": 61.0, "fraud_flags": [{"rule": "SIGNATURE_FORGERY", "severity": "HIGH", "clause": "APH Clause 2.4 - Seal & Signature Tamper", "detail": "Registrar signature copy-pasted across multiple pages without unique pen-pressure gradients.", "box": {"top": 72, "left": 30, "width": 45, "height": 14, "label": "Copied Signature"}}], "forensic_details": {"metadata_integrity": "SUSPICIOUS", "compression_homogeneity": "ANOMALOUS", "signature_stamp": "DUPLICATE_STAMP"}, "created_at": "2026-11-02 21:25:06"}, {"id": 5, "user_id": 1, "filename": "doc_fire_safety.pdf", "original_name": "Fire_Safety_NOC_Certificate.pdf", "file_size_kb": 195.4, "category": "Regulatory Compliance Certificate (APH)", "sha256_hash": "3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f", "verdict": "REAL", "authenticity_score": 99.1, "risk_level": "LOW", "ocr_extracted_text": "STATE FIRE PREVENTION SERVICE - NO OBJECTION CERTIFICATE\\nValid through: 2028-03-31\\nAll building safety guidelines satisfied.", "ela_tamper_score": 6.5, "fraud_flags": [], "forensic_details": {"metadata_integrity": "PASSED", "compression_homogeneity": "UNIFORM", "signature_stamp": "VALID"}, "created_at": "2026-11-02 21:25:06"}, {"id": 6, "user_id": 1, "filename": "doc_building_plan.pdf", "original_name": "Approved_Structural_Blueprint.pdf", "file_size_kb": 840.2, "category": "Land Registry & Infrastructure Deed", "sha256_hash": "7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b", "verdict": "REAL", "authenticity_score": 95.8, "risk_level": "LOW", "ocr_extracted_text": "MUNICIPAL TOWN PLANNING AUTHORITY\\nApproved Built-up Carpet Area: 12,450 sq. meters\\nStructural Engineer License: SE-77189.", "ela_tamper_score": 11.0, "fraud_flags": [], "forensic_details": {"metadata_integrity": "PASSED", "compression_homogeneity": "UNIFORM", "signature_stamp": "VALID"}, "created_at": "2026-11-02 21:25:06"}, {"id": 7, "user_id": 1, "filename": "doc_endowment_fund.pdf", "original_name": "Endowment_Fixed_Deposit_Receipt.pdf", "file_size_kb": 220.6, "category": "Financial Audit Statement", "sha256_hash": "1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d", "verdict": "REAL", "authenticity_score": 97.2, "risk_level": "LOW", "ocr_extracted_text": "SCHEDULED COMMERCIAL BANK - JOINT FIXED DEPOSIT\\nFDR #992019481 - In favor of AICTE & Society\\nPrincipal: INR 1,00,00,000/-.", "ela_tamper_score": 9.4, "fraud_flags": [], "forensic_details": {"metadata_integrity": "PASSED", "compression_homogeneity": "UNIFORM", "signature_stamp": "VALID"}, "created_at": "2026-11-02 21:25:06"}, {"id": 8, "user_id": 1, "filename": "doc_society_registration.pdf", "original_name": "Trust_Deed_Registration.pdf", "file_size_kb": 410.0, "category": "Regulatory Compliance Certificate (APH)", "sha256_hash": "8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f", "verdict": "REAL", "authenticity_score": 96.0, "risk_level": "LOW", "ocr_extracted_text": "REGISTRAR OF SOCIETIES & TRUSTS\\nRegistration #8819/2012\\nValid and active non-profit educational society.", "ela_tamper_score": 10.2, "fraud_flags": [], "forensic_details": {"metadata_integrity": "PASSED", "compression_homogeneity": "UNIFORM", "signature_stamp": "VALID"}, "created_at": "2026-11-02 21:25:06"}, {"id": 9, "user_id": 1, "filename": "doc_pollution_control.pdf", "original_name": "Pollution_Control_Board_Consent.pdf", "file_size_kb": 315.7, "category": "Regulatory Compliance Certificate (APH)", "sha256_hash": "2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b", "verdict": "REAL", "authenticity_score": 94.7, "risk_level": "LOW", "ocr_extracted_text": "STATE POLLUTION CONTROL BOARD - CONSENT TO OPERATE\\nAir & Water Acts Compliance Verified.", "ela_tamper_score": 13.5, "fraud_flags": [], "forensic_details": {"metadata_integrity": "PASSED", "compression_homogeneity": "UNIFORM", "signature_stamp": "VALID"}, "created_at": "2026-11-02 21:25:06"}, {"id": 10, "user_id": 1, "filename": "doc_affidavit_compliance.pdf", "original_name": "Annual_Compliance_Affidavit.pdf", "file_size_kb": 260.5, "category": "Regulatory Compliance Certificate (APH)", "sha256_hash": "4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b", "verdict": "REAL", "authenticity_score": 98.0, "risk_level": "LOW", "ocr_extracted_text": "NOTARIZED AFFIDAVIT OF COMPLIANCE\\nNotary Registration #44192\\nAll declarations under APH 2026-27 attested under oath.", "ela_tamper_score": 8.0, "fraud_flags": [], "forensic_details": {"metadata_integrity": "PASSED", "compression_homogeneity": "UNIFORM", "signature_stamp": "VALID"}, "created_at": "2026-11-02 21:25:06"}];
+const INITIAL_RULES = [{"clause": "Clause 1.1", "title": "Registration & Accreditation Authority", "description": "Verification of non-profit trust/society registration and state government gazette notification.", "status": "MANDATORY", "weight": "20%"}, {"clause": "Clause 1.8", "title": "Digital Image & Layout Integrity", "description": "Mandatory ELA and optical parameter scan to detect digital font splicing and altered seals.", "status": "MANDATORY", "weight": "25%"}, {"clause": "Clause 2.4", "title": "Seal & Authorized Signatory Verification", "description": "Comparison of registrar signatures against national specimen archives and pen-pressure gradients.", "status": "MANDATORY", "weight": "15%"}, {"clause": "Clause 4.1.2", "title": "Land Deed & Survey Boundary Check", "description": "Demarcation coordinates and continuous land title without mortgage encumbrance.", "status": "MANDATORY", "weight": "20%"}, {"clause": "Clause 6.3", "title": "Audited Financial & Endowment Balance", "description": "Three-year audited balance sheet and joint fixed deposit receipt validation.", "status": "MANDATORY", "weight": "20%"}];
+const INITIAL_FRAUD_INTEL = {"overall_network_risk": "MEDIUM", "fraud_detection_rate": "94.2%", "cross_institutional_duplicates": [{"entity_id": "APH-2026-119284", "institution": "Global Horizon Technical Institute", "matched_with": "Apex Institute of Science & Technology", "shared_attribute": "Duplicate Cadastral Survey Boundary Marker #412B", "confidence": 98.7, "risk": "CRITICAL"}, {"entity_id": "APH-2026-339105", "institution": "Royal Academy of Technology & Management", "matched_with": "State Vocational Polytechnic", "shared_attribute": "Reused Faculty Ph.D. Registration #PHD-88192", "confidence": 99.4, "risk": "HIGH"}], "suspicious_patterns": [{"pattern": "Repeated Phone & PAN hash across 3 distinct entities", "frequency": 3, "status": "FLAGGED"}, {"pattern": "Inconsistent JPEG Quantization Matrix in Tax Invoices", "frequency": 2, "status": "FLAGGED"}, {"pattern": "High Frequency Ingestion from Anonymous Tor Exit Nodes", "frequency": 1, "status": "BLOCKED"}], "composite_risk_score": 38.5};
+const INITIAL_TEMPLATE_COMPARE = {"master_template_name": "AICTE_APH_Gazette_Master_Template_v26.pdf", "comparison_score": 78.4, "discrepancies": [{"type": "SIGNATURE_DISPLACEMENT", "location": "Bottom Right [Page 1]", "delta": "dx: +14px, dy: -8px", "verdict": "SHIFTED_BOX"}, {"type": "FONT_WEIGHT_ANOMALY", "location": "Clause 4.2 Built-up Area Metric", "delta": "Raster thickness deviates 28%", "verdict": "SPLICED_TEXT"}, {"type": "OFFICIAL_SEAL_INTEGRITY", "location": "Center Header Seal", "delta": "Outer radius noise pattern exceeds threshold", "verdict": "FORGED_STAMP"}], "alignment_status": "TEMPLATE_MISMATCH_SUSPECT"};
+
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('token') || 'demo_officer_authenticated_session';
+  });
+  const [user, setUser] = useState(() => {
+    try {
+      const u = localStorage.getItem('user');
+      return u ? JSON.parse(u) : {
+        id: 1,
+        full_name: 'Sunita Venkatesh',
+        email: 'officer@veridoc.gov',
+        role: 'admin',
+        organization: 'Senior Technical Verification Officer'
+      };
+    } catch(e) {
+      return { id: 1, full_name: 'Sunita Venkatesh', email: 'officer@veridoc.gov', role: 'admin', organization: 'Senior Technical Verification Officer' };
+    }
+  });
   const [activeTab, setActiveTab] = useState('dashboard');
   const [userMode, setUserMode] = useState('manager'); // 'manager' | 'applicant'
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -449,11 +477,21 @@ function App() {
     review_completed: 1,
     recent_audits: []
   });
-  const [documents, setDocuments] = useState([]);
-  const [applications, setApplications] = useState([]);
-  const [complianceRules, setComplianceRules] = useState([]);
-  const [fraudIntelligence, setFraudIntelligence] = useState(null);
-  const [templateComparison, setTemplateComparison] = useState(null);
+  const [documents, setDocuments] = useState(() => {
+    try {
+      const c = localStorage.getItem('vdoc_docs');
+      return c ? JSON.parse(c) : INITIAL_DOCUMENTS;
+    } catch(e) { return INITIAL_DOCUMENTS; }
+  });
+  const [applications, setApplications] = useState(() => {
+    try {
+      const c = localStorage.getItem('vdoc_apps');
+      return c ? JSON.parse(c) : INITIAL_APPLICATIONS;
+    } catch(e) { return INITIAL_APPLICATIONS; }
+  });
+  const [complianceRules, setComplianceRules] = useState(INITIAL_RULES);
+  const [fraudIntelligence, setFraudIntelligence] = useState(INITIAL_FRAUD_INTEL);
+  const [templateComparison, setTemplateComparison] = useState(INITIAL_TEMPLATE_COMPARE);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
@@ -519,7 +557,7 @@ function App() {
     setIsDailyRefreshing(true);
     setDailyRefreshMsg('');
     try {
-      const res = await fetch('/api/applications/daily-refresh', {
+      const res = await fetch(API_BASE + '/api/applications/daily-refresh', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -544,27 +582,33 @@ function App() {
       'Authorization': `Bearer ${token}`
     };
     try {
-      const [sRes, dRes, aRes, rRes, fRes, tRes] = await Promise.all([fetch('/api/dashboard/stats', {
-        headers
-      }), fetch('/api/documents', {
-        headers
-      }), fetch('/api/applications', {
-        headers
-      }), fetch('/api/compliance-rules', {
-        headers
-      }), fetch('/api/fraud/intelligence', {
-        headers
-      }), fetch('/api/template/compare', {
-        headers
-      })]);
-      if (sRes.ok) setStats(await sRes.json());
-      if (dRes.ok) setDocuments(await dRes.json());
-      if (aRes.ok) setApplications(await aRes.json());
-      if (rRes.ok) setComplianceRules(await rRes.json());
-      if (fRes.ok) setFraudIntelligence(await fRes.json());
-      if (tRes.ok) setTemplateComparison(await tRes.json());
+      const [sRes, dRes, aRes, rRes, fRes, tRes] = await Promise.all([
+        fetch(API_BASE + '/api/dashboard/stats', { headers }).catch(() => null),
+        fetch(API_BASE + '/api/documents', { headers }).catch(() => null),
+        fetch(API_BASE + '/api/applications', { headers }).catch(() => null),
+        fetch(API_BASE + '/api/compliance-rules', { headers }).catch(() => null),
+        fetch(API_BASE + '/api/fraud/intelligence', { headers }).catch(() => null),
+        fetch(API_BASE + '/api/template/compare', { headers }).catch(() => null)
+      ]);
+      if (sRes && sRes.ok) {
+        const sData = await sRes.json();
+        setStats(sData);
+      }
+      if (dRes && dRes.ok) {
+        const dData = await dRes.json();
+        setDocuments(dData);
+        try { localStorage.setItem('vdoc_docs', JSON.stringify(dData)); } catch(e){}
+      }
+      if (aRes && aRes.ok) {
+        const aData = await aRes.json();
+        setApplications(aData);
+        try { localStorage.setItem('vdoc_apps', JSON.stringify(aData)); } catch(e){}
+      }
+      if (rRes && rRes.ok) setComplianceRules(await rRes.json());
+      if (fRes && fRes.ok) setFraudIntelligence(await fRes.json());
+      if (tRes && tRes.ok) setTemplateComparison(await tRes.json());
     } catch (e) {
-      console.error(e);
+      console.warn('Background sync note:', e);
     }
   };
   useEffect(() => {
@@ -618,7 +662,7 @@ function App() {
   // Reset Demo Records to VERIDOC baseline
   const handleResetDemo = async () => {
     try {
-      const res = await fetch('/api/demo/reset', {
+      const res = await fetch(API_BASE + '/api/demo/reset', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -640,7 +684,7 @@ function App() {
     setDigiLoading(true);
     setDigiResult(null);
     try {
-      const res = await fetch('/api/digilocker/verify', {
+      const res = await fetch(API_BASE + '/api/digilocker/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -669,7 +713,7 @@ function App() {
     setBioLoading(true);
     setBioMode(mode);
     try {
-      const res = await fetch('/api/biometrics/verify', {
+      const res = await fetch(API_BASE + '/api/biometrics/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -694,7 +738,7 @@ function App() {
   // Regulatory Compliance Assistant Check
   const handleRunComplianceAudit = async () => {
     try {
-      const res = await fetch('/api/compliance/audit', {
+      const res = await fetch(API_BASE + '/api/compliance/audit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -714,7 +758,7 @@ function App() {
   // Blockchain Certificate Lookup
   const handleBlockchainLookup = async id => {
     try {
-      const res = await fetch(`/api/blockchain/verify/${id}`, {
+      const res = await fetch(API_BASE + `/api/blockchain/verify/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -738,7 +782,7 @@ function App() {
     setChatInput('');
     setChatLoading(true);
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(API_BASE + '/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -773,7 +817,7 @@ function App() {
     formData.append('document', selectedFile);
     formData.append('category', category);
     try {
-      const res = await fetch('/api/documents/verify', {
+      const res = await fetch(API_BASE + '/api/documents/verify', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -796,7 +840,7 @@ function App() {
     setIsVerifying(true);
     setScanResult(null);
     try {
-      const res = await fetch('/api/documents/demo', {
+      const res = await fetch(API_BASE + '/api/documents/demo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -824,7 +868,7 @@ function App() {
     e.preventDefault();
     setAppMsg('');
     try {
-      const res = await fetch('/api/applications', {
+      const res = await fetch(API_BASE + '/api/applications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -852,7 +896,7 @@ function App() {
     if (!selectedApp) return;
     setDecisionMsg('');
     try {
-      const res = await fetch(`/api/applications/${selectedApp.id}/decision`, {
+      const res = await fetch(API_BASE + `/api/applications/${selectedApp.id}/decision`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -880,7 +924,7 @@ function App() {
   // Fetch Certificate
   const handleOpenCertificate = async docId => {
     try {
-      const res = await fetch(`/api/documents/${docId}/certificate`, {
+      const res = await fetch(API_BASE + `/api/documents/${docId}/certificate`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

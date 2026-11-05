@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1b4332">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VERIDOC">
+  
+  <title>VERIDOC वेरीडॉक — Regulatory Verification & Audit Operations Platform</title>
+
+  <!-- PWA Manifest & App Icons -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Three.js for 3D Holographic Visuals -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- React 18 & ReactDOM (High-Reliability CDN with Fallback) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script>
+    if (!window.React) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"><\/script>');
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script>
+    if (!window.ReactDOM) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"><\/script>');
+    }
+  </script>
+
+  <!-- Premium Typography: Outfit + Plus Jakarta Sans + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Outfit"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            forest: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#2d6a4f',
+              600: '#1b4332', /* Primary Forest Green */
+              700: '#143628',
+              800: '#0e261d',
+              900: '#06140e',
+            },
+            emerald: {
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+            }
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(27, 67, 50, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+            'card': '0 10px 30px -10px rgba(27, 67, 50, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02)',
+            'elevated': '0 20px 40px -15px rgba(27, 67, 50, 0.15), 0 4px 8px rgba(0, 0, 0, 0.04)',
+            'glow': '0 0 25px rgba(82, 183, 136, 0.35)',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'pulse-soft': 'pulseSoft 2.5s ease-in-out infinite',
+            'float': 'float 4s ease-in-out infinite',
+            'spin-slow': 'spin 4s linear infinite',
+            'slide-up': 'slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'fade-in': 'fadeIn 0.25s ease-out forwards',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' },
+            },
+            pulseSoft: {
+              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+              '50%': { opacity: '0.85', transform: 'scale(1.02)' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(12px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: #fafbfc;
+      color: #111827;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+      letter-spacing: -0.02em;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    
+    /* Interactive card hover */
+    .card-hover {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px -8px rgba(27, 67, 50, 0.12);
+    }
+
+    /* Button tap animation */
+    .btn-tap {
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-tap:active {
+      transform: scale(0.97);
+    }
+
+    /* Live radar indicator */
+    .radar-ping {
+      position: relative;
+    }
+    .radar-ping::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 9999px;
+      border: 2px solid #52b788;
+      animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+      opacity: 0.75;
+    }
+    @keyframes ping {
+      75%, 100% {
+        transform: scale(1.8);
+        opacity: 0;
+      }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-certificate, #printable-certificate * {
+        visibility: visible;
+      }
+      #printable-certificate {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+      }
+    }
+    
+    /* Splash loader spinner */
+    .loader-ring {
+      display: inline-block;
+      width: 44px;
+      height: 44px;
+      border: 3.5px solid #dcfce7;
+      border-top-color: #1b4332;
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-[#fafbfc] text-gray-900 antialiased selection:bg-forest-100 selection:text-forest-900">
+  
+  <!-- App Root with Instant Zero-Delay Mount -->
+  <div id="root">
+    <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fafbfc; font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif; padding: 24px; text-align: center;">
+      <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px -5px rgba(27, 67, 50, 0.3); margin-bottom: 16px;">
+        <svg style="width: 34px; height: 34px; color: #ffffff;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      </div>
+      <div style="font-size: 24px; font-weight: 900; letter-spacing: -0.5px; color: #1b4332; margin-bottom: 4px;">
+        VERIDOC <span style="font-size: 16px; font-weight: 700; color: #52b788; margin-left: 4px;">• वेरीडॉक</span>
+      </div>
+      <p style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b;">
+        Regulatory Verification & Audit Operations Platform
+      </p>
+    </div>
+  </div>
+
+  <!-- Precompiled Pure Production JavaScript (Zero In-Browser Babel Lag, Instant Load) -->
+  <script src="/static/app.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          console.log('VERIDOC ServiceWorker registered successfully:', reg.scope);
+        }).catch((err) => {
+          console.log('ServiceWorker registration error:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

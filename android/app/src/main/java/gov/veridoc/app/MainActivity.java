@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String VERIDOC_HOST = "veridoc-ai-1-np0b.onrender.com";
     public static final String APP_URL = "https://" + VERIDOC_HOST + "/";
+    public static final String LOCAL_APP_URL = "file:///android_asset/index.html";
 
     private WebView webView;
     private ProgressBar progressBar;
@@ -76,11 +77,11 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setColorSchemeResources(R.color.forest_primary, R.color.emerald_accent);
         swipeRefreshLayout.setOnRefreshListener(() -> webView.reload());
 
-        // Setup Retry Action
+        // Setup Retry Action (reloads instant asset or cloud)
         btnRetry.setOnClickListener(v -> {
             offlineContainer.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
-            webView.loadUrl(APP_URL);
+            webView.loadUrl(LOCAL_APP_URL);
         });
 
         // Setup Modern Back Press Navigation
@@ -104,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
         // Request initial permissions (Camera for liveness verification)
         checkPermissions();
 
-        // Load the live VeriDoc Regulatory Platform
+        // Load the VeriDoc Platform instantly from pre-packaged local assets (<1s launch)
         if (savedInstanceState == null) {
-            webView.loadUrl(APP_URL);
+            webView.loadUrl(LOCAL_APP_URL);
         } else {
             webView.restoreState(savedInstanceState);
         }
@@ -158,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
+        settings.setAllowFileAccessFromFileURLs(true);
+        settings.setAllowUniversalAccessFromFileURLs(true);
         settings.setLoadsImagesAutomatically(true);
         settings.setSupportZoom(false);
         settings.setBuiltInZoomControls(false);
@@ -199,9 +203,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
+                String scheme = uri.getScheme();
                 String host = uri.getHost();
 
-                // Stay in-app for VeriDoc domain
+                // Stay in-app for local bundled assets and VeriDoc domain
+                if ("file".equalsIgnoreCase(scheme)) {
+                    return false;
+                }
                 if (host != null && host.contains(VERIDOC_HOST)) {
                     return false;
                 }
